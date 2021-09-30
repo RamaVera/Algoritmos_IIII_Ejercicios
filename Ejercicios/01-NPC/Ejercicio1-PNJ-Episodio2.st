@@ -34,7 +34,7 @@ responderSegunCantidadDeInteraccionesCon: unPj.
 	! !
 
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'ramiro99 9/29/2021 12:28:14'!
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'ramiro99 9/29/2021 17:20:38'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -349,19 +349,54 @@ treborElGuardia
 hacerQueElGuardiaOlvideSusInteracciones
 	TreborElGuardiaDeSkyrim olvidar.! !
 
-!PruebasInteracionesConTreborElGuardia class methodsFor: 'opiniones e interacciones' stamp: 'JMB 9/21/2021 20:53:36'!
+!PruebasInteracionesConTreborElGuardia class methodsFor: 'opiniones e interacciones' stamp: 'ramiro99 9/29/2021 13:07:02'!
 hacerQueRiverwoodOlvideTodasSusCalificaciones
-	"Implementar cuando sea necesario"! !
+	PueblodeRivenwood olvidarOpiniones ! !
 
-!PruebasInteracionesConTreborElGuardia class methodsFor: 'opiniones e interacciones' stamp: 'JMB 9/22/2021 00:06:53'!
+!PruebasInteracionesConTreborElGuardia class methodsFor: 'opiniones e interacciones' stamp: 'ramiro99 9/29/2021 13:09:02'!
 hacerQueRiverwoodVeaPrometedorAHamilton
-	Assert isTrue: false description: 'Reemplazar esto por la implementación correspondiente'.! !
+	PueblodeRivenwood calificarComoPrometedorA: PjHamilton.! !
 
 !PruebasInteracionesConTreborElGuardia class methodsFor: 'opiniones e interacciones' stamp: 'JMB 9/25/2021 12:52:12'!
 olvidarInteraccionesYOpiniones
 	self hacerQueElGuardiaOlvideSusInteracciones. 	
 	self hacerQueRiverwoodOlvideTodasSusCalificaciones.
 ! !
+
+
+!classDefinition: #PueblodeRivenwood category: 'Ejercicio1-PNJ-Episodio2'!
+DenotativeObject subclass: #PueblodeRivenwood
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Ejercicio1-PNJ-Episodio2'!
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'PueblodeRivenwood class' category: 'Ejercicio1-PNJ-Episodio2'!
+PueblodeRivenwood class
+	instanceVariableNames: 'opinionesDelPuebloSobreUnPj'!
+
+!PueblodeRivenwood class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 12:59:47'!
+calificarComoPrometedorA: unPj
+	^ opinionesDelPuebloSobreUnPj at: unPj put: 'Prometedor'.
+	! !
+
+!PueblodeRivenwood class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 13:03:58'!
+olvidarOpiniones
+	 opinionesDelPuebloSobreUnPj := Dictionary new! !
+
+!PueblodeRivenwood class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 15:51:53'!
+queOpinanSobre: unPj
+	^ opinionesDelPuebloSobreUnPj at: unPj ifAbsentPut: ['Desconocido'].
+	! !
+
+
+!PueblodeRivenwood class methodsFor: 'as yet unclassified' stamp: 'ramiro99 9/29/2021 17:20:38'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	opinionesDelPuebloSobreUnPj := ((Dictionary new) add: (PjHamilton->'Prometedor'); yourself).! !
 
 
 !classDefinition: #TreborElGuardiaDeSkyrim category: 'Ejercicio1-PNJ-Episodio2'!
@@ -375,7 +410,7 @@ DenotativeObject subclass: #TreborElGuardiaDeSkyrim
 
 !classDefinition: 'TreborElGuardiaDeSkyrim class' category: 'Ejercicio1-PNJ-Episodio2'!
 TreborElGuardiaDeSkyrim class
-	instanceVariableNames: 'frases memoriaDeTrebor'!
+	instanceVariableNames: 'memoriaDeTrebor frasesADesconocidos frasesAPrometedores opinionesDeTrebor'!
 
 !TreborElGuardiaDeSkyrim class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 10:28:25'!
 interactuarCon: unPj
@@ -383,29 +418,70 @@ interactuarCon: unPj
 	^ self responderSegunCantidadDeInteraccionesCon: unPj.
 	! !
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 10:49:09'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 17:19:46'!
 olvidar
-	memoriaDeTrebor := Dictionary new! !
+	memoriaDeTrebor := Dictionary new.
+	"opinionesDeTrebor := Dictionary new."! !
 
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 10:38:42'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 16:36:30'!
+decirFraseAlDesconocido: unPj
+		^frasesADesconocidos at: ( (memoriaDeTrebor at: unPj) min: frasesADesconocidos size)	! !
+
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 17:19:20'!
+decirFraseAlPrometedor: unPj
+		^frasesAPrometedores at: ( ( memoriaDeTrebor at: unPj ) min: frasesAPrometedores size )	! !
+
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 16:56:52'!
+olvidarInteraccionSiElPuebloCambiaDeOpinionSobre: unPj
+	| opinionDelPueblo |	
+	
+	opinionDelPueblo := self preguntarAlPuebloQueOpinaSobre: unPj.
+	
+	opinionDelPueblo = (opinionesDeTrebor at: unPj ) ifFalse: [
+		self olvidar.	
+		]
+	
+	
+	! !
+
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 16:58:00'!
+opinarComoElPuebloSobre: unPj
+	^ opinionesDeTrebor at: unPj put: (self preguntarAlPuebloQueOpinaSobre: unPj ).
+	! !
+
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 15:54:16'!
+preguntarAlPuebloQueOpinaSobre: unPj	
+	^PueblodeRivenwood queOpinanSobre: unPj.! !
+
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 15:48:10'!
 recordarInteraccionCon: unPj
-	|cantidadDeInteracciones|
+	|cantidadDeInteracciones |.
 	cantidadDeInteracciones := memoriaDeTrebor at: unPj ifAbsent: [ 0 ].
+	opinionesDeTrebor at: unPj ifAbsentPut: [ 'Desconocido' ].
+	
 	memoriaDeTrebor at: unPj put: cantidadDeInteracciones + 1! !
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 10:46:10'!
-responderSegunCantidadDeInteraccionesCon: unPj.
-	^ frases at: ( (memoriaDeTrebor at: unPj) min: frases size)
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 17:04:51'!
+responderSegunCantidadDeInteraccionesCon: unPj
+		
+	self olvidarInteraccionSiElPuebloCambiaDeOpinionSobre: unPj.
+	self opinarComoElPuebloSobre: unPj.
+	
+	((opinionesDeTrebor at: unPj)  = 'Desconocido')	 ifTrue: [ ^ self decirFraseAlDesconocido: unPj ].
+	((opinionesDeTrebor at: unPj)  = 'Prometedor' ) ifTrue: [^ self decirFraseAlPrometedor: unPj		  ].
 	! !
 
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'ramiro99 9/29/2021 12:28:14'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'ramiro99 9/29/2021 17:20:38'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	frases := #('Hola forastero' '¿Todo bien?' '¿Algún problema?' ).
-	memoriaDeTrebor := ((Dictionary new) add: (PjHamilton->3); add: (PjTirion->3); yourself).! !
+	memoriaDeTrebor := ((Dictionary new) add: (PjHamilton->2); yourself).
+	frasesADesconocidos := #('Hola forastero' '¿Todo bien?' '¿Algún problema?' ).
+	frasesAPrometedores := #('Bienvenido aventurero!!' 'Espero que tengas una buena estadia en Riverwood' ).
+	opinionesDeTrebor := ((Dictionary new) add: (PjHamilton->'Prometedor'); yourself).! !
 
 CarolinaLaCuranderaDeSkyrim initializeAfterFileIn!
+PueblodeRivenwood initializeAfterFileIn!
 TreborElGuardiaDeSkyrim initializeAfterFileIn!
