@@ -11,10 +11,18 @@ DenotativeObject subclass: #CarolinaLaCuranderaDeSkyrim
 CarolinaLaCuranderaDeSkyrim class
 	instanceVariableNames: 'interaccionesDeCarolina frasesADesconocidos frasesAPrometedores opinionesDeCarolina'!
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 12:14:20'!
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones' stamp: 'RV 9/30/2021 18:07:10'!
 interactuarCon: unPj
+	| respuestaAPj |
+	
 	self recordarInteraccionCon: unPj.
-	^ self responderSegunCantidadDeInteraccionesCon: unPj.
+	
+	respuestaAPj := self responderSegunCantidadDeInteraccionesCon: unPj.
+	
+	(interaccionesDeCarolina at: unPj) >= (frasesADesconocidos size) ifTrue:[
+		self influenciarAlPuebloSobre: unPj.].
+	
+	^ respuestaAPj
 	! !
 
 !CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones' stamp: 'Rv 9/30/2021 11:26:06'!
@@ -34,10 +42,9 @@ decirFraseAlDesconocido: unPj
 decirFraseAlPrometedor: unPj
 		^frasesAPrometedores at: ( ( interaccionesDeCarolina at: unPj ) min: frasesAPrometedores size )	! !
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 9/30/2021 11:26:06'!
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'RV 9/30/2021 18:03:34'!
 influenciarAlPuebloSobre: unPj
-	(interaccionesDeCarolina at: unPj) >= (frasesADesconocidos size) ifTrue: [ 
-		PueblodeRivenwood calificarComoPrometedorA: unPj.].! !
+		PueblodeRivenwood calificarComoPrometedorA: unPj.! !
 
 !CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 9/30/2021 11:26:06'!
 olvidarInteraccionSiElPuebloCambiaDeOpinionSobre: unPj
@@ -62,27 +69,25 @@ recordarInteraccionCon: unPj
 	opinionesDeCarolina at: unPj ifAbsentPut: [ 'Desconocido' ].
 	interaccionesDeCarolina at: unPj put: cantidadDeInteracciones + 1! !
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'AMV 9/30/2021 12:39:11'!
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'RV 9/30/2021 17:57:43'!
 responderSegunCantidadDeInteraccionesCon: unPj.
 
 	self olvidarInteraccionSiElPuebloCambiaDeOpinionSobre: unPj.	
 	self opinarComoElPuebloSobre: unPj.
 	
-	((opinionesDeCarolina at: unPj)  = 'Desconocido')	 ifTrue: [
-		self influenciarAlPuebloSobre: unPj.
-		^ self decirFraseAlDesconocido: unPj].
+	((opinionesDeCarolina at: unPj)  = 'Desconocido')	 ifTrue: [		^ self decirFraseAlDesconocido: unPj].
 	((opinionesDeCarolina at: unPj)  = 'Prometedor' ) ifTrue: [^ self decirFraseAlPrometedor: unPj		  ].
 	! !
 
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 12:53:50'!
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 18:08:07'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	interaccionesDeCarolina := ((Dictionary new) add: (PjHamilton->3); yourself).
+	interaccionesDeCarolina := ((Dictionary new) add: (PjHamilton->3); add: (PjTirion->3); yourself).
 	frasesADesconocidos := #('¿Estás enfermo forastero?' 'Ah, solo quieres conversar' 'Cuando tengas una aflicción, ven a verme' ).
 	frasesAPrometedores := #('Salud aventurero!!' 'Toma esta pócima que te hará crecer el pelo. Y cuando tengas una aflicción, ven a verme' ).
-	opinionesDeCarolina := ((Dictionary new) add: (PjHamilton->'Desconocido'); yourself).! !
+	opinionesDeCarolina := ((Dictionary new) add: (PjHamilton->'Desconocido'); add: (PjTirion->'Desconocido'); yourself).! !
 
 !CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'Rv 9/30/2021 11:24:10'!
 opinarComoElPuebloSobre: unPj
@@ -460,7 +465,7 @@ queOpinanSobre: unPj
 	! !
 
 
-!PueblodeRivenwood class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 12:53:50'!
+!PueblodeRivenwood class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 18:08:07'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -543,11 +548,11 @@ responderSegunCantidadDeInteraccionesCon: unPj
 	! !
 
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 12:53:50'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 18:08:07'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	interaccionesDeTrebor := ((Dictionary new) add: (PjHamilton->2); yourself).
+	interaccionesDeTrebor := ((Dictionary new) add: (PjHamilton->1); yourself).
 	frasesADesconocidos := #('Hola forastero' '¿Todo bien?' '¿Algún problema?' ).
 	frasesAPrometedores := #('Bienvenido aventurero!!' 'Espero que tengas una buena estadia en Riverwood' ).
 	opinionesDeTrebor := ((Dictionary new) add: (PjHamilton->'Prometedor'); yourself).! !
