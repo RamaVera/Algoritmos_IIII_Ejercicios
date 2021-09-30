@@ -1,3 +1,47 @@
+!classDefinition: #CarolinaLaCuranderaDeSkyrim category: 'Ejercicio1-PNJ-Episodio2'!
+DenotativeObject subclass: #CarolinaLaCuranderaDeSkyrim
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Ejercicio1-PNJ-Episodio2'!
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CarolinaLaCuranderaDeSkyrim class' category: 'Ejercicio1-PNJ-Episodio2'!
+CarolinaLaCuranderaDeSkyrim class
+	instanceVariableNames: 'frases memoriaDeCarolina'!
+
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 12:14:20'!
+interactuarCon: unPj
+	self recordarInteraccionCon: unPj.
+	^ self responderSegunCantidadDeInteraccionesCon: unPj.
+	! !
+
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 12:15:49'!
+olvidar
+	memoriaDeCarolina := Dictionary new! !
+
+
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 12:16:06'!
+recordarInteraccionCon: unPj
+	|cantidadDeInteracciones|
+	cantidadDeInteracciones := memoriaDeCarolina at: unPj ifAbsent: [ 0 ].
+	memoriaDeCarolina at: unPj put: cantidadDeInteracciones + 1! !
+
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 12:16:14'!
+responderSegunCantidadDeInteraccionesCon: unPj.
+	^ frases at: ( (memoriaDeCarolina at: unPj) min: frases size)
+	! !
+
+
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'ramiro99 9/29/2021 12:28:14'!
+initializeCollaboratorsFromFile
+	"Auto generated method for loading purposes - Do not modify it"
+
+	frases := #('¿Estás enfermo forastero?' 'Ah, solo quieres conversar' 'Cuando tengas una aflicción, ven a verme' ).
+	memoriaDeCarolina := ((Dictionary new)).! !
+
+
 !classDefinition: #PjHamilton category: 'Ejercicio1-PNJ-Episodio2'!
 DenotativeObject subclass: #PjHamilton
 	instanceVariableNames: ''
@@ -134,17 +178,17 @@ test10CuandoLaCuranderaCambiaLaOpinionDelPuebloSobreElPersonajeAPrometedorReinic
 	Assert that: 'Bienvenido aventurero!!' isEqualTo: (self treborElGuardia interactuarCon: self hamilton)! !
 
 
-!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'personajes' stamp: 'JMB 9/25/2021 12:41:48'!
+!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'personajes' stamp: 'ramiro99 9/29/2021 12:20:35'!
 carolinaLaCurandera
-	Assert isTrue: false description: 'Reemplazar esto por la implementación correspondiente'.! !
+	^CarolinaLaCuranderaDeSkyrim ! !
 
-!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'personajes' stamp: 'JMB 9/22/2021 00:09:00'!
+!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'personajes' stamp: 'ramiro99 9/29/2021 12:12:41'!
 hamilton
-	Assert isTrue: false description: 'Reemplazar esto por la implementación correspondiente'.! !
+	^ PjHamilton ! !
 
-!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'personajes' stamp: 'JMB 9/22/2021 00:09:16'!
+!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'personajes' stamp: 'ramiro99 9/29/2021 12:12:54'!
 tirion
-	Assert isTrue: false description: 'Reemplazar esto por la implementación correspondiente'.! !
+	^ PjTirion ! !
 
 !PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'personajes' stamp: 'JMB 9/21/2021 20:52:20'!
 treborElGuardia
@@ -155,9 +199,9 @@ treborElGuardia
 esVistoPorElPuebloComoPrometedor: unPersonaje
 	Assert isTrue: false description: 'Reemplazar esto por la implementación correspondiente'.! !
 
-!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'opiniones e interacciones' stamp: 'JMB 9/21/2021 21:01:46'!
+!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'opiniones e interacciones' stamp: 'ramiro99 9/29/2021 12:23:55'!
 hacerQueLaCuranderaOlvideSusInteracciones
-	"Implementar cuando sea necesario"! !
+	^ self carolinaLaCurandera olvidar ! !
 
 !PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'opiniones e interacciones' stamp: 'JMB 9/21/2021 21:02:50'!
 hacerQueRiverwoodOlvideTodasSusCalificaciones
@@ -356,11 +400,12 @@ responderSegunCantidadDeInteraccionesCon: unPj.
 	! !
 
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'ramiro99 9/29/2021 10:58:05'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'ramiro99 9/29/2021 12:28:14'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
 	frases := #('Hola forastero' '¿Todo bien?' '¿Algún problema?' ).
 	memoriaDeTrebor := ((Dictionary new) add: (PjHamilton->3); add: (PjTirion->3); yourself).! !
 
+CarolinaLaCuranderaDeSkyrim initializeAfterFileIn!
 TreborElGuardiaDeSkyrim initializeAfterFileIn!
