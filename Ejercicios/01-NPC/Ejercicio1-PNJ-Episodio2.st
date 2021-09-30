@@ -1,3 +1,19 @@
+!classDefinition: #PjHamilton category: 'Ejercicio1-PNJ-Episodio2'!
+DenotativeObject subclass: #PjHamilton
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Ejercicio1-PNJ-Episodio2'!
+
+
+!classDefinition: #PjTirion category: 'Ejercicio1-PNJ-Episodio2'!
+DenotativeObject subclass: #PjTirion
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Ejercicio1-PNJ-Episodio2'!
+
+
 !classDefinition: #PruebasInteracionesConCarolinaLaCurandera category: 'Ejercicio1-PNJ-Episodio2'!
 DenotativeObject subclass: #PruebasInteracionesConCarolinaLaCurandera
 	instanceVariableNames: ''
@@ -272,13 +288,13 @@ test09CuandoElGuardiaInteractuaPorSegundaVezConUnPersonajeCalificadoPorElPuebloC
 ! !
 
 
-!PruebasInteracionesConTreborElGuardia class methodsFor: 'personajes' stamp: 'JMB 9/22/2021 00:06:18'!
+!PruebasInteracionesConTreborElGuardia class methodsFor: 'personajes' stamp: 'ramiro99 9/29/2021 10:50:54'!
 hamilton
-	Assert isTrue: false description: 'Reemplazar esto por la implementación correspondiente'.! !
+	^ PjHamilton! !
 
-!PruebasInteracionesConTreborElGuardia class methodsFor: 'personajes' stamp: 'JMB 9/22/2021 00:06:29'!
+!PruebasInteracionesConTreborElGuardia class methodsFor: 'personajes' stamp: 'ramiro99 9/29/2021 10:52:40'!
 tirion
-	Assert isTrue: false description: 'Reemplazar esto por la implementación correspondiente'.! !
+	^ PjTirion! !
 
 !PruebasInteracionesConTreborElGuardia class methodsFor: 'personajes' stamp: 'JMB 9/21/2021 20:42:44'!
 treborElGuardia
@@ -315,33 +331,36 @@ DenotativeObject subclass: #TreborElGuardiaDeSkyrim
 
 !classDefinition: 'TreborElGuardiaDeSkyrim class' category: 'Ejercicio1-PNJ-Episodio2'!
 TreborElGuardiaDeSkyrim class
-	instanceVariableNames: 'frases cantidadDeInteracciones'!
+	instanceVariableNames: 'frases memoriaDeTrebor'!
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones' stamp: 'JMB 9/18/2021 11:24:55'!
-interactuar
-	self recordarInteraccion.
-	^ self responderSegunCantidadDeInteracciones! !
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 10:28:25'!
+interactuarCon: unPj
+	self recordarInteraccionCon: unPj.
+	^ self responderSegunCantidadDeInteraccionesCon: unPj.
+	! !
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones' stamp: 'JMB 9/18/2021 11:24:19'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones' stamp: 'ramiro99 9/29/2021 10:49:09'!
 olvidar
-	cantidadDeInteracciones := 0! !
+	memoriaDeTrebor := Dictionary new! !
 
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'JMB 9/18/2021 11:25:28'!
-recordarInteraccion
-	cantidadDeInteracciones := cantidadDeInteracciones + 1.
-! !
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 10:38:42'!
+recordarInteraccionCon: unPj
+	|cantidadDeInteracciones|
+	cantidadDeInteracciones := memoriaDeTrebor at: unPj ifAbsent: [ 0 ].
+	memoriaDeTrebor at: unPj put: cantidadDeInteracciones + 1! !
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'JMB 9/18/2021 11:35:15'!
-responderSegunCantidadDeInteracciones
-	^ frases at: (cantidadDeInteracciones min: frases size)! !
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 10:46:10'!
+responderSegunCantidadDeInteraccionesCon: unPj.
+	^ frases at: ( (memoriaDeTrebor at: unPj) min: frases size)
+	! !
 
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'JMB 9/25/2021 13:08:25'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'ramiro99 9/29/2021 10:58:05'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
 	frases := #('Hola forastero' '¿Todo bien?' '¿Algún problema?' ).
-	cantidadDeInteracciones := 0.! !
+	memoriaDeTrebor := ((Dictionary new) add: (PjHamilton->3); add: (PjTirion->3); yourself).! !
 
 TreborElGuardiaDeSkyrim initializeAfterFileIn!
