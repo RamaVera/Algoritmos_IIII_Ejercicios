@@ -75,14 +75,14 @@ responderSegunCantidadDeInteraccionesCon: unPj.
 	! !
 
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'AMV 9/30/2021 12:43:32'!
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 12:53:50'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	interaccionesDeCarolina := ((Dictionary new)).
+	interaccionesDeCarolina := ((Dictionary new) add: (PjHamilton->3); yourself).
 	frasesADesconocidos := #('¿Estás enfermo forastero?' 'Ah, solo quieres conversar' 'Cuando tengas una aflicción, ven a verme' ).
 	frasesAPrometedores := #('Salud aventurero!!' 'Toma esta pócima que te hará crecer el pelo. Y cuando tengas una aflicción, ven a verme' ).
-	opinionesDeCarolina := ((Dictionary new)).! !
+	opinionesDeCarolina := ((Dictionary new) add: (PjHamilton->'Desconocido'); yourself).! !
 
 !CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'Rv 9/30/2021 11:24:10'!
 opinarComoElPuebloSobre: unPj
@@ -247,6 +247,14 @@ treborElGuardia
 esVistoPorElPuebloComoPrometedor: unPj
 	^(PueblodeRivenwood queOpinanSobre: unPj) = 'Prometedor'! !
 
+!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'opiniones e interacciones' stamp: 'RV 9/30/2021 12:51:18'!
+hacerQueElGuardiaOlvideSusInteracciones
+	TreborElGuardiaDeSkyrim olvidarInteracciones.! !
+
+!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'opiniones e interacciones' stamp: 'RV 9/30/2021 12:51:32'!
+hacerQueElGuardiaOlvideSusOpiniones
+	TreborElGuardiaDeSkyrim olvidarOpiniones.! !
+
 !PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'opiniones e interacciones' stamp: 'Rv 9/30/2021 10:22:04'!
 hacerQueLaCuranderaOlvideSusInteracciones
 	^ self carolinaLaCurandera olvidarInteracciones ! !
@@ -263,10 +271,12 @@ hacerQueRiverwoodOlvideTodasSusCalificaciones
 hacerQueRiverwoodVeaPrometedorAHamilton
 	PueblodeRivenwood calificarComoPrometedorA: PjHamilton ! !
 
-!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'opiniones e interacciones' stamp: 'Rv 9/30/2021 11:25:06'!
+!PruebasInteracionesConCarolinaLaCurandera class methodsFor: 'opiniones e interacciones' stamp: 'RV 9/30/2021 12:52:01'!
 olvidarInteraccionesYOpiniones
 	self hacerQueLaCuranderaOlvideSusInteracciones.	
 	self hacerQueLaCuranderaOlvideSusOpiniones.
+	self hacerQueElGuardiaOlvideSusOpiniones.
+	self hacerQueElGuardiaOlvideSusInteracciones.
 	self hacerQueRiverwoodOlvideTodasSusCalificaciones.
 ! !
 
@@ -450,11 +460,11 @@ queOpinanSobre: unPj
 	! !
 
 
-!PueblodeRivenwood class methodsFor: 'as yet unclassified' stamp: 'AMV 9/30/2021 12:43:32'!
+!PueblodeRivenwood class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 12:53:50'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	opinionesDelPuebloSobreUnPj := ((Dictionary new)).! !
+	opinionesDelPuebloSobreUnPj := ((Dictionary new) add: (PjHamilton->'Prometedor'); yourself).! !
 
 
 !classDefinition: #TreborElGuardiaDeSkyrim category: 'Ejercicio1-PNJ-Episodio2'!
@@ -533,11 +543,11 @@ responderSegunCantidadDeInteraccionesCon: unPj
 	! !
 
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'AMV 9/30/2021 12:43:32'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 12:53:50'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	interaccionesDeTrebor := ((Dictionary new) add: (PjHamilton->((SerializableBlockClosure basicNew instVarAt: 1 put: (SerializableBlockClosure basicNew instVarAt: 1 put: TreborElGuardiaDeSkyrim; instVarAt: 2 put: '[ 1. ]'; instVarAt: 3 put: #(); yourself); instVarAt: 2 put: '[ 1. ]'; instVarAt: 3 put: #(); yourself) asEvaluable)); yourself).
+	interaccionesDeTrebor := ((Dictionary new) add: (PjHamilton->2); yourself).
 	frasesADesconocidos := #('Hola forastero' '¿Todo bien?' '¿Algún problema?' ).
 	frasesAPrometedores := #('Bienvenido aventurero!!' 'Espero que tengas una buena estadia en Riverwood' ).
 	opinionesDeTrebor := ((Dictionary new) add: (PjHamilton->'Prometedor'); yourself).! !
