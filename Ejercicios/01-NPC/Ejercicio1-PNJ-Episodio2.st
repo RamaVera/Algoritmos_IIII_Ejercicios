@@ -11,18 +11,18 @@ DenotativeObject subclass: #CarolinaLaCuranderaDeSkyrim
 CarolinaLaCuranderaDeSkyrim class
 	instanceVariableNames: 'interaccionesDeCarolina frasesADesconocidos frasesAPrometedores opinionesDeCarolina'!
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones' stamp: 'RV 9/30/2021 18:07:10'!
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones' stamp: 'Rv 10/3/2021 19:28:28'!
 interactuarCon: unPj
-	| respuestaAPj |
-	
+	| respuestaAUnPj |
+	opinionesDeCarolina at: unPj ifAbsentPut: [ 'Desconocido' ].
+	self reiniciarInteraccionSiElPuebloCambioDeOpinionSobre: unPj.	
+	self opinarComoElPuebloSobre: unPj.
 	self recordarInteraccionCon: unPj.
+	respuestaAUnPj := self responderSegunOpinionCon: unPj.	
+	(self siSeCompletaronLosDialogosCon: unPj) ifTrue:[
+		self influenciarPositivamenteAlPuebloSobre: unPj.].
 	
-	respuestaAPj := self responderSegunCantidadDeInteraccionesCon: unPj.
-	
-	(interaccionesDeCarolina at: unPj) >= (frasesADesconocidos size) ifTrue:[
-		self influenciarAlPuebloSobre: unPj.].
-	
-	^ respuestaAPj
+	^ respuestaAUnPj
 	! !
 
 !CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones' stamp: 'Rv 9/30/2021 11:26:06'!
@@ -42,45 +42,51 @@ decirFraseAlDesconocido: unPj
 decirFraseAlPrometedor: unPj
 		^frasesAPrometedores at: ( ( interaccionesDeCarolina at: unPj ) min: frasesAPrometedores size )	! !
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'RV 9/30/2021 18:03:34'!
-influenciarAlPuebloSobre: unPj
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 10/3/2021 19:02:57'!
+influenciarPositivamenteAlPuebloSobre: unPj
 		PueblodeRivenwood calificarComoPrometedorA: unPj.! !
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 9/30/2021 11:26:06'!
-olvidarInteraccionSiElPuebloCambiaDeOpinionSobre: unPj
-	| opinionDelPueblo |	
-	
-	opinionDelPueblo := self preguntarAlPuebloQueOpinaSobre: unPj.
-	
-	opinionDelPueblo = (opinionesDeCarolina at: unPj ) ifFalse: [ 
-		interaccionesDeCarolina at: unPj put: 1]
-	
-	
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 9/30/2021 11:24:10'!
+opinarComoElPuebloSobre: unPj
+	^ opinionesDeCarolina at: unPj put: (self preguntarAlPuebloQueOpinaSobre: unPj ).
 	! !
 
 !CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 20:05:58'!
 preguntarAlPuebloQueOpinaSobre: unPj	
 	^PueblodeRivenwood queOpinanSobre: unPj.! !
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 9/30/2021 11:26:06'!
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 10/3/2021 19:08:49'!
 recordarInteraccionCon: unPj
 	|cantidadDeInteracciones|
 	cantidadDeInteracciones := interaccionesDeCarolina at: unPj ifAbsent: [ 0 ].
-	opinionesDeCarolina at: unPj ifAbsentPut: [ 'Desconocido' ].
-	interaccionesDeCarolina at: unPj put: cantidadDeInteracciones + 1! !
+	interaccionesDeCarolina at: unPj put: cantidadDeInteracciones + 1.
+	! !
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'RV 9/30/2021 17:57:43'!
-responderSegunCantidadDeInteraccionesCon: unPj.
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 10/3/2021 19:20:14'!
+reiniciarInteraccionSiElPuebloCambioDeOpinionSobre: unPj
+	| opinionDelPueblo |	
+	
+	opinionDelPueblo := self preguntarAlPuebloQueOpinaSobre: unPj.
+	
+	opinionDelPueblo = (opinionesDeCarolina at: unPj ) ifFalse: [ 
+		interaccionesDeCarolina at: unPj put: 0]
+	
+	
+	! !
 
-	self olvidarInteraccionSiElPuebloCambiaDeOpinionSobre: unPj.	
-	self opinarComoElPuebloSobre: unPj.
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 10/3/2021 18:57:29'!
+responderSegunOpinionCon: unPj.
 	
 	((opinionesDeCarolina at: unPj)  = 'Desconocido')	 ifTrue: [		^ self decirFraseAlDesconocido: unPj].
 	((opinionesDeCarolina at: unPj)  = 'Prometedor' ) ifTrue: [^ self decirFraseAlPrometedor: unPj		  ].
 	! !
 
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 10/3/2021 19:02:04'!
+siSeCompletaronLosDialogosCon: unPj 
+	^ (interaccionesDeCarolina at: unPj) >= (frasesADesconocidos size)! !
 
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 18:08:07'!
+
+!CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'Rv 10/3/2021 19:29:22'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
@@ -88,11 +94,6 @@ initializeCollaboratorsFromFile
 	frasesADesconocidos := #('¿Estás enfermo forastero?' 'Ah, solo quieres conversar' 'Cuando tengas una aflicción, ven a verme' ).
 	frasesAPrometedores := #('Salud aventurero!!' 'Toma esta pócima que te hará crecer el pelo. Y cuando tengas una aflicción, ven a verme' ).
 	opinionesDeCarolina := ((Dictionary new) add: (PjHamilton->'Desconocido'); add: (PjTirion->'Desconocido'); yourself).! !
-
-!CarolinaLaCuranderaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'Rv 9/30/2021 11:24:10'!
-opinarComoElPuebloSobre: unPj
-	^ opinionesDeCarolina at: unPj put: (self preguntarAlPuebloQueOpinaSobre: unPj ).
-	! !
 
 
 !classDefinition: #PjHamilton category: 'Ejercicio1-PNJ-Episodio2'!
@@ -465,11 +466,11 @@ queOpinanSobre: unPj
 	! !
 
 
-!PueblodeRivenwood class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 18:08:07'!
+!PueblodeRivenwood class methodsFor: 'as yet unclassified' stamp: 'Rv 10/3/2021 19:29:22'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	opinionesDelPuebloSobreUnPj := ((Dictionary new) add: (PjHamilton->'Prometedor'); yourself).! !
+	opinionesDelPuebloSobreUnPj := ((Dictionary new) add: (PjHamilton->'Desconocido'); yourself).! !
 
 
 !classDefinition: #TreborElGuardiaDeSkyrim category: 'Ejercicio1-PNJ-Episodio2'!
@@ -485,10 +486,14 @@ DenotativeObject subclass: #TreborElGuardiaDeSkyrim
 TreborElGuardiaDeSkyrim class
 	instanceVariableNames: 'interaccionesDeTrebor frasesADesconocidos frasesAPrometedores opinionesDeTrebor'!
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones' stamp: 'Rv 9/30/2021 11:02:37'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones' stamp: 'Rv 10/3/2021 19:28:09'!
 interactuarCon: unPj
-	self recordarInteraccionCon: unPj.
-	^ self responderSegunCantidadDeInteraccionesCon: unPj.
+	opinionesDeTrebor at: unPj ifAbsentPut: [ 'Desconocido' ].
+	
+	self reiniciarInteraccionSiElPuebloCambioDeOpinionSobre: unPj.	
+	self opinarComoElPuebloSobre: unPj.
+	self recordarInteraccionCon: unPj.	
+	^ self responderSegunOpinionCon: unPj.
 	! !
 
 !TreborElGuardiaDeSkyrim class methodsFor: 'interacciones' stamp: 'Rv 9/30/2021 10:37:19'!
@@ -508,19 +513,6 @@ decirFraseAlDesconocido: unPj
 decirFraseAlPrometedor: unPj
 		^frasesAPrometedores at: ( ( interaccionesDeTrebor at: unPj ) min: frasesAPrometedores size)	! !
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 9/30/2021 11:05:09'!
-olvidarInteraccionSiElPuebloCambiaDeOpinionSobre: unPj
-	| opinionDelPueblo |	
-	
-	opinionDelPueblo := self preguntarAlPuebloQueOpinaSobre: unPj.
-	
-	opinionDelPueblo = (opinionesDeTrebor at: unPj ) ifFalse: [
-		interaccionesDeTrebor at: unPj put: 1
-		]
-	
-	
-	! !
-
 !TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'ramiro99 9/29/2021 16:58:00'!
 opinarComoElPuebloSobre: unPj
 	^ opinionesDeTrebor at: unPj put: (self preguntarAlPuebloQueOpinaSobre: unPj ).
@@ -530,32 +522,40 @@ opinarComoElPuebloSobre: unPj
 preguntarAlPuebloQueOpinaSobre: unPj	
 	^PueblodeRivenwood queOpinanSobre: unPj.! !
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 9/30/2021 10:31:53'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 10/3/2021 19:12:53'!
 recordarInteraccionCon: unPj
 	|cantidadDeInteracciones |.
 	cantidadDeInteracciones := interaccionesDeTrebor at: unPj ifAbsent: [ 0 ].
-	opinionesDeTrebor at: unPj ifAbsentPut: [ 'Desconocido' ].
-	
 	interaccionesDeTrebor at: unPj put: cantidadDeInteracciones + 1! !
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 9/30/2021 11:00:24'!
-responderSegunCantidadDeInteraccionesCon: unPj
-	self olvidarInteraccionSiElPuebloCambiaDeOpinionSobre: unPj.	
-	self opinarComoElPuebloSobre: unPj.
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 10/3/2021 19:27:36'!
+reiniciarInteraccionSiElPuebloCambioDeOpinionSobre: unPj
+	| opinionDelPueblo |	
 	
+	opinionDelPueblo := self preguntarAlPuebloQueOpinaSobre: unPj.
+	
+	opinionDelPueblo = (opinionesDeTrebor at: unPj ) ifFalse: [
+		interaccionesDeTrebor at: unPj put: 0
+		]
+	
+	
+	! !
+
+!TreborElGuardiaDeSkyrim class methodsFor: 'interacciones - privado' stamp: 'Rv 10/3/2021 18:50:25'!
+responderSegunOpinionCon: unPj
 	((opinionesDeTrebor at: unPj)  = 'Desconocido')	 ifTrue: [ ^ self decirFraseAlDesconocido: unPj ].
 	((opinionesDeTrebor at: unPj)  = 'Prometedor' ) ifTrue: [^ self decirFraseAlPrometedor: unPj		  ].
 	! !
 
 
-!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'RV 9/30/2021 18:08:07'!
+!TreborElGuardiaDeSkyrim class methodsFor: 'as yet unclassified' stamp: 'Rv 10/3/2021 19:29:22'!
 initializeCollaboratorsFromFile
 	"Auto generated method for loading purposes - Do not modify it"
 
-	interaccionesDeTrebor := ((Dictionary new) add: (PjHamilton->1); yourself).
+	interaccionesDeTrebor := ((Dictionary new) add: (PjHamilton->2); yourself).
 	frasesADesconocidos := #('Hola forastero' '¿Todo bien?' '¿Algún problema?' ).
 	frasesAPrometedores := #('Bienvenido aventurero!!' 'Espero que tengas una buena estadia en Riverwood' ).
-	opinionesDeTrebor := ((Dictionary new) add: (PjHamilton->'Prometedor'); yourself).! !
+	opinionesDeTrebor := ((Dictionary new) add: (PjHamilton->'Desconocido'); yourself).! !
 
 CarolinaLaCuranderaDeSkyrim initializeAfterFileIn!
 PueblodeRivenwood initializeAfterFileIn!
