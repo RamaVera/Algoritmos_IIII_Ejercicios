@@ -21,36 +21,40 @@ TestCase subclass: #CustomerBookTest
 	poolDictionaries: ''
 	category: 'CodigoRepetido-Ejercicio'!
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'NR 4/3/2019 10:50:19'!
+!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/11/2021 14:07:58'!
+getEvaluationTimeInMillisecondsOf: BlockToBeTimed
+	^ Time millisecondsToRun: BlockToBeTimed.! !
+
+
+!CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/11/2021 14:00:45'!
 test01AddingCustomerShouldNotTakeMoreThan50Milliseconds
 
-	| customerBook millisecondsBeforeRunning millisecondsAfterRunning |
+	| customerBook millisecondItTookToEvaluate |
 	
 	customerBook := CustomerBook new.
 	
-	millisecondsBeforeRunning := Time millisecondClockValue * millisecond.
-	customerBook addCustomerNamed: 'John Lennon'.
-	millisecondsAfterRunning := Time millisecondClockValue * millisecond.
+	millisecondItTookToEvaluate := self getEvaluationTimeInMillisecondsOf: [ 
+		customerBook addCustomerNamed: 'John Lennon'
+		].
 	
-	self assert: (millisecondsAfterRunning-millisecondsBeforeRunning) < (50 * millisecond)
+	self assert: millisecondItTookToEvaluate < (50 * millisecond)
 	
 ! !
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'NR 4/3/2019 10:50:13'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/11/2021 14:04:02'!
 test02RemovingCustomerShouldNotTakeMoreThan100Milliseconds
 
-	| customerBook millisecondsBeforeRunning millisecondsAfterRunning paulMcCartney |
+	| customerBook millisecondItTookToEvaluate paulMcCartney |
 	
 	customerBook := CustomerBook new.
 	paulMcCartney := 'Paul McCartney'.
 	
 	customerBook addCustomerNamed: paulMcCartney.
 	  
-	millisecondsBeforeRunning := Time millisecondClockValue * millisecond.
-	customerBook removeCustomerNamed: paulMcCartney.
-	millisecondsAfterRunning := Time millisecondClockValue * millisecond.
-	
-	self assert: (millisecondsAfterRunning-millisecondsBeforeRunning) < (100 * millisecond)
+	millisecondItTookToEvaluate := self getEvaluationTimeInMillisecondsOf: [ 
+		customerBook removeCustomerNamed: paulMcCartney.
+		].	
+	self assert: millisecondItTookToEvaluate < (100 * millisecond)
 	
 ! !
 
