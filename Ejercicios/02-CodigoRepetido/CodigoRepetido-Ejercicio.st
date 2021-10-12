@@ -21,40 +21,37 @@ TestCase subclass: #CustomerBookTest
 	poolDictionaries: ''
 	category: 'CodigoRepetido-Ejercicio'!
 
-!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/11/2021 14:07:58'!
-getEvaluationTimeInMillisecondsOf: BlockToBeTimed
-	^ Time millisecondsToRun: BlockToBeTimed.! !
+!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/12/2021 18:29:14'!
+assertExecutionTimeOf: aBlock isLessThan: maxTimeToExecuteInMilliseconds
+	| millisecondItTookToEvaluate |
+	
+	millisecondItTookToEvaluate := Time millisecondsToRun: aBlock.
+	
+	self assert: millisecondItTookToEvaluate < (maxTimeToExecuteInMilliseconds)! !
 
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/11/2021 14:00:45'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/12/2021 18:28:42'!
 test01AddingCustomerShouldNotTakeMoreThan50Milliseconds
 
-	| customerBook millisecondItTookToEvaluate |
+	| customerBook  |
 	
 	customerBook := CustomerBook new.
-	
-	millisecondItTookToEvaluate := self getEvaluationTimeInMillisecondsOf: [ 
-		customerBook addCustomerNamed: 'John Lennon'
-		].
-	
-	self assert: millisecondItTookToEvaluate < (50 * millisecond)
-	
-! !
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/11/2021 14:04:02'!
+	self assertExecutionTimeOf: [ customerBook addCustomerNamed: 'John Lennon'] isLessThan: 50*millisecond.
+	! !
+
+!CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/12/2021 18:28:54'!
 test02RemovingCustomerShouldNotTakeMoreThan100Milliseconds
 
-	| customerBook millisecondItTookToEvaluate paulMcCartney |
+	| customerBook paulMcCartney |
 	
 	customerBook := CustomerBook new.
 	paulMcCartney := 'Paul McCartney'.
 	
 	customerBook addCustomerNamed: paulMcCartney.
 	  
-	millisecondItTookToEvaluate := self getEvaluationTimeInMillisecondsOf: [ 
-		customerBook removeCustomerNamed: paulMcCartney.
-		].	
-	self assert: millisecondItTookToEvaluate < (100 * millisecond)
+	self assertExecutionTimeOf:  [ customerBook removeCustomerNamed: paulMcCartney] isLessThan: 100 * millisecond.
+
 	
 ! !
 
