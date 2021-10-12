@@ -29,6 +29,24 @@ assertExecutionTimeOf: aBlock isLessThan: maxTimeToExecuteInMilliseconds
 	
 	self assert: millisecondItTookToEvaluate < (maxTimeToExecuteInMilliseconds)! !
 
+!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/12/2021 19:47:21'!
+assertThatActiveCustomersNumberIs: ActiveCustomersNumber AndSuspendedCustomersNumberIs: SuspendedCustomersNumber AndTheTotalCustomerNumberIs: totalNumberOfCustomer in: CustomerBook
+
+	self assert: ActiveCustomersNumber equals: CustomerBook numberOfActiveCustomers.
+	self assert: SuspendedCustomersNumber equals: CustomerBook numberOfSuspendedCustomers.
+	self assert: totalNumberOfCustomer equals: CustomerBook numberOfCustomers.! !
+
+!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/12/2021 18:51:38'!
+assertThatThereAre: ActiveCustomersNumber ofActiveCustomersAnd: SuspendedCustomersNumber ofSuspendedCustomersAnd: totalNumberOfCustomer ofTotalCustomersIn: CustomerBook
+
+	self assert: ActiveCustomersNumber equals: CustomerBook numberOfActiveCustomers.
+	self assert: SuspendedCustomersNumber equals: CustomerBook numberOfSuspendedCustomers.
+	self assert: totalNumberOfCustomer equals: CustomerBook numberOfCustomers.! !
+
+!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/12/2021 18:55:31'!
+assertThatThereAreNoCustomersIn: CustomerBook  
+	self assertThatThereAre: 0 ofActiveCustomersAnd: 0 ofSuspendedCustomersAnd: 0 ofTotalCustomersIn: CustomerBook.! !
+
 
 !CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/12/2021 18:28:42'!
 test01AddingCustomerShouldNotTakeMoreThan50Milliseconds
@@ -86,7 +104,7 @@ test04CanNotRemoveAnInvalidCustomer
 			self assert: (customerBook includesCustomerNamed: johnLennon) ]
 ! !
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'NR 4/3/2019 10:50:25'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/12/2021 20:09:51'!
 test05SuspendingACustomerShouldNotRemoveItFromCustomerBook
 
 	| customerBook paulMcCartney|
@@ -97,16 +115,17 @@ test05SuspendingACustomerShouldNotRemoveItFromCustomerBook
 	customerBook addCustomerNamed: paulMcCartney.
 	customerBook suspendCustomerNamed: paulMcCartney.
 	
-	self assert: 0 equals: customerBook numberOfActiveCustomers.
-	self assert: 1 equals: customerBook numberOfSuspendedCustomers.
-	self assert: 1 equals: customerBook numberOfCustomers.
+	self assertThatActiveCustomersNumberIs: 0 AndSuspendedCustomersNumberIs: 1 AndTheTotalCustomerNumberIs: 1 in: 	customerBook.
+	
+	"self assertThatThereAre: 0 ofActiveCustomersAnd: 1 ofSuspendedCustomersAnd: 1 ofTotalCustomersIn: customerBook."
+	
 	self assert: (customerBook includesCustomerNamed: paulMcCartney).
 	
 
 	
 ! !
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'NR 4/3/2019 10:50:28'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/12/2021 18:45:44'!
 test06RemovingASuspendedCustomerShouldRemoveItFromCustomerBook
 
 	| customerBook paulMcCartney|
@@ -118,9 +137,7 @@ test06RemovingASuspendedCustomerShouldRemoveItFromCustomerBook
 	customerBook suspendCustomerNamed: paulMcCartney.
 	customerBook removeCustomerNamed: paulMcCartney.
 	
-	self assert: 0 equals: customerBook numberOfActiveCustomers.
-	self assert: 0 equals: customerBook numberOfSuspendedCustomers.
-	self assert: 0 equals: customerBook numberOfCustomers.
+	self assertThatThereAreNoCustomersIn: customerBook.
 	self deny: (customerBook includesCustomerNamed: paulMcCartney).
 
 
