@@ -9,3 +9,4 @@ Se pueden modificar las clases provistas, sólo para eliminar código repetido. 
 Consejo: Comiencen por intentar quitar el código repetido de los tests, y luego sigan por el modelo.
 
 Aclaración: Para hacer este ejercicio más sencillo se modela a un Customer utilizando un String en vez de una clase Customer. No es el objetivo del ejercicio que ustedes corrijan esta decisión, ni las consecuencias que trae consigo (por ej. que no se pueda agregar al CustomerBook dos Customers diferentes con el mismo nombre).
+
