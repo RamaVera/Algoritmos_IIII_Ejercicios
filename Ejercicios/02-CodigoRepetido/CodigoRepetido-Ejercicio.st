@@ -29,23 +29,20 @@ assertExecutionTimeOf: aBlock isLessThan: maxTimeToExecuteInMilliseconds
 	
 	self assert: millisecondItTookToEvaluate < (maxTimeToExecuteInMilliseconds)! !
 
-!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/12/2021 19:47:21'!
-assertThatActiveCustomersNumberIs: ActiveCustomersNumber AndSuspendedCustomersNumberIs: SuspendedCustomersNumber AndTheTotalCustomerNumberIs: totalNumberOfCustomer in: CustomerBook
+!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/13/2021 21:46:42'!
+assertThatActiveCustomersNumberIs: ActiveCustomersNumber AndSuspendedCustomersNumberIs: SuspendedCustomersNumber in: CustomerBook
+	
+	| totalNumberOfCustomers |
+	
+	totalNumberOfCustomers := ActiveCustomersNumber + SuspendedCustomersNumber. 
 
 	self assert: ActiveCustomersNumber equals: CustomerBook numberOfActiveCustomers.
 	self assert: SuspendedCustomersNumber equals: CustomerBook numberOfSuspendedCustomers.
-	self assert: totalNumberOfCustomer equals: CustomerBook numberOfCustomers.! !
+	self assert: totalNumberOfCustomers equals: CustomerBook numberOfCustomers.! !
 
-!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/12/2021 18:51:38'!
-assertThatThereAre: ActiveCustomersNumber ofActiveCustomersAnd: SuspendedCustomersNumber ofSuspendedCustomersAnd: totalNumberOfCustomer ofTotalCustomersIn: CustomerBook
-
-	self assert: ActiveCustomersNumber equals: CustomerBook numberOfActiveCustomers.
-	self assert: SuspendedCustomersNumber equals: CustomerBook numberOfSuspendedCustomers.
-	self assert: totalNumberOfCustomer equals: CustomerBook numberOfCustomers.! !
-
-!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/12/2021 18:55:31'!
+!CustomerBookTest methodsFor: 'test-private' stamp: 'Rv 10/13/2021 21:47:08'!
 assertThatThereAreNoCustomersIn: CustomerBook  
-	self assertThatThereAre: 0 ofActiveCustomersAnd: 0 ofSuspendedCustomersAnd: 0 ofTotalCustomersIn: CustomerBook.! !
+	self assertThatActiveCustomersNumberIs: 0 AndSuspendedCustomersNumberIs: 0 in: CustomerBook.! !
 
 
 !CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/12/2021 18:28:42'!
@@ -104,7 +101,7 @@ test04CanNotRemoveAnInvalidCustomer
 			self assert: (customerBook includesCustomerNamed: johnLennon) ]
 ! !
 
-!CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/12/2021 20:09:51'!
+!CustomerBookTest methodsFor: 'tests' stamp: 'Rv 10/13/2021 21:48:06'!
 test05SuspendingACustomerShouldNotRemoveItFromCustomerBook
 
 	| customerBook paulMcCartney|
@@ -115,10 +112,7 @@ test05SuspendingACustomerShouldNotRemoveItFromCustomerBook
 	customerBook addCustomerNamed: paulMcCartney.
 	customerBook suspendCustomerNamed: paulMcCartney.
 	
-	self assertThatActiveCustomersNumberIs: 0 AndSuspendedCustomersNumberIs: 1 AndTheTotalCustomerNumberIs: 1 in: 	customerBook.
-	
-	"self assertThatThereAre: 0 ofActiveCustomersAnd: 1 ofSuspendedCustomersAnd: 1 ofTotalCustomersIn: customerBook."
-	
+	self assertThatActiveCustomersNumberIs: 0 AndSuspendedCustomersNumberIs: 1 in: 	customerBook.	
 	self assert: (customerBook includesCustomerNamed: paulMcCartney).
 	
 
@@ -202,28 +196,11 @@ addCustomerNamed: aName
 	
 	active add: aName ! !
 
-!CustomerBook methodsFor: 'customer management' stamp: 'NR 4/3/2019 10:14:26'!
+!CustomerBook methodsFor: 'customer management' stamp: 'Rv 10/13/2021 21:52:41'!
 removeCustomerNamed: aName 
- 
-	1 to: active size do: 
-	[ :index |
-		aName = (active at: index)
-			ifTrue: [
-				active removeAt: index.
-				^ aName 
-			] 
-	].
-
-	1 to: suspended size do: 	
-	[ :index |
-		aName = (suspended at: index)
-			ifTrue: [
-				suspended removeAt: index.
-				^ aName 
-			] 
-	].
-	
-	^ NotFound signal.
+	^ active remove: aName ifAbsent: [
+		suspended remove: aName ifAbsent:[
+			^NotFound signal]].
 ! !
 
 !CustomerBook methodsFor: 'customer management' stamp: 'NR 4/3/2019 10:14:26'!
