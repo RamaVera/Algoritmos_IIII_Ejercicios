@@ -139,20 +139,18 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 
 !classDefinition: #SentenceFinderByPrefixTest category: 'Stack-Exercise'!
 TestCase subclass: #SentenceFinderByPrefixTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'emptyStack oneElementStack variousElementsStack'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefixTest methodsFor: 'TestWithEmptyStack' stamp: 'AMV 11/2/2021 23:44:52'!
+!SentenceFinderByPrefixTest methodsFor: 'TestWithEmptyStack' stamp: 'AMV 11/3/2021 01:35:23'!
 test01CannotFindASentenceWithEmptyStack
 
-	| stack prefix findedSentenceCollection sentenceFinder |
-	prefix := Prefix with: 'win'.
+	| prefix findedSentenceCollection sentenceFinder |
+	prefix := 'win'.
 	
-	stack := OOStack new.
-	
-	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	sentenceFinder := SentenceFinderByPrefix newWith: emptyStack .
 	findedSentenceCollection := sentenceFinder find: prefix.
 	
 	self assert: findedSentenceCollection isEmpty.
@@ -161,16 +159,13 @@ test01CannotFindASentenceWithEmptyStack
 	! !
 
 
-!SentenceFinderByPrefixTest methodsFor: 'TestWithOnlyOneElementInStack' stamp: 'AMV 11/2/2021 23:45:33'!
+!SentenceFinderByPrefixTest methodsFor: 'TestWithOnlyOneElementInStack' stamp: 'AMV 11/3/2021 01:36:06'!
 test02CannotFindASentenceWithDifferentPrefix
 
-	| stack prefix findedSentenceCollection sentenceFinder |
-	prefix := Prefix with: 'win'.
+	| prefix findedSentenceCollection sentenceFinder |
+	prefix := 'Win'.
 	
-	stack := OOStack new.
-	stack push: 'Winter is coming'.
-	
-	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	sentenceFinder := SentenceFinderByPrefix newWith: oneElementStack.
 	findedSentenceCollection := sentenceFinder find: prefix.
 	
 	self assert: findedSentenceCollection isEmpty.
@@ -178,35 +173,28 @@ test02CannotFindASentenceWithDifferentPrefix
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'TestWithOnlyOneElementInStack' stamp: 'AMV 11/2/2021 23:45:40'!
+!SentenceFinderByPrefixTest methodsFor: 'TestWithOnlyOneElementInStack' stamp: 'AMV 11/3/2021 01:37:11'!
 test03FindASingleSentenceWithTheSamePrefix
 
-	| stack prefix findedSentenceCollection sentenceFinder |
-	prefix := Prefix with: 'win'.
+	| prefix findedSentenceCollection sentenceFinder |
+	prefix := 'win'.	
 	
-	stack := OOStack new.
-	stack push: 'winter is coming'.
-	
-	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	sentenceFinder := SentenceFinderByPrefix newWith: oneElementStack .
 	findedSentenceCollection := sentenceFinder find: prefix.
 	
-	self assert: 'winter is coming' equals: (findedSentenceCollection at:1). 
+	self assert: findedSentenceCollection includes: 'winter is coming'.  
 	
 	
 	! !
 
 
-!SentenceFinderByPrefixTest methodsFor: 'TestWithTwoOrMoreElementsInStack' stamp: 'AMV 11/2/2021 23:54:17'!
+!SentenceFinderByPrefixTest methodsFor: 'TestWithTwoOrMoreElementsInStack' stamp: 'AMV 11/3/2021 01:37:28'!
 test04FindTwoSentencesWithTheSamePrefix
 
-	| stack prefix findedSentenceCollection sentenceFinder |
-	prefix := Prefix with: 'win'.
+	| prefix findedSentenceCollection sentenceFinder |
+	prefix := 'win'.	
 	
-	stack := OOStack new.
-	stack push: 'winter is coming'.
-	stack push: 'winning eleven'.
-	
-	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	sentenceFinder := SentenceFinderByPrefix newWith: variousElementsStack .
 	findedSentenceCollection := sentenceFinder find: prefix.
 	
 	self assert: findedSentenceCollection includes: 'winter is coming'.  
@@ -215,213 +203,208 @@ test04FindTwoSentencesWithTheSamePrefix
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'TestWithTwoOrMoreElementsInStack' stamp: 'AMV 11/2/2021 23:46:00'!
+!SentenceFinderByPrefixTest methodsFor: 'TestWithTwoOrMoreElementsInStack' stamp: 'AMV 11/3/2021 01:38:45'!
 test05FindOneSentenceWithTheSamePrefixOnAStackWithMultipleDataStoraged
 
-	| stack prefix findedSentenceCollection sentenceFinder |
-	prefix := Prefix with: 'win'.
+	| prefix findedSentenceCollection sentenceFinder |
+	prefix := 'winn'.	
 	
-	stack := OOStack new.
-	stack push: 'not today'.
-	stack push: 'winning eleven'.
-	stack push: 'valar morghulis'.
-	stack push: 'Winter is coming'.
-	
-	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	sentenceFinder := SentenceFinderByPrefix newWith: variousElementsStack .
 	findedSentenceCollection := sentenceFinder find: prefix.
 	
-	self assert: 'winning eleven' equals: (findedSentenceCollection at:1). 
+	self assert: findedSentenceCollection includes: 'winning eleven'.  
 	self assert: findedSentenceCollection size = 1
 	
 	
 	! !
 
 
-!SentenceFinderByPrefixTest methodsFor: 'TestBadPrefix' stamp: 'AMV 11/2/2021 23:49:30'!
+!SentenceFinderByPrefixTest methodsFor: 'TestBadPrefix' stamp: 'AMV 11/3/2021 01:39:04'!
 test06TryToSearchWithASpacePrefix
 
-	| stack prefix sentenceFinder |
-	prefix := Prefix with: 'valar mor'.
+	| prefix sentenceFinder |
+	prefix := 'valar mor'.
 	
-	stack := OOStack new.
-	stack push: 'not today'.
-	stack push: 'winning eleven'.
-	stack push: 'valar morghulis'.
-	stack push: 'Winter is coming'.
-	
-	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	sentenceFinder := SentenceFinderByPrefix newWith: variousElementsStack .
 	
 	self
 		should: [ sentenceFinder find: prefix ]
 		raise: Error
 		withExceptionDo: [ :anError |
-			self assert: anError messageText = InvalidPrefix sendInvalidPrefixErrorMessage ]
+			self assert: anError messageText = SentenceFinderByPrefix sendInvalidPrefixErrorMessage ]
 
 	
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'TestBadPrefix' stamp: 'AMV 11/2/2021 23:55:12'!
+!SentenceFinderByPrefixTest methodsFor: 'TestBadPrefix' stamp: 'AMV 11/3/2021 01:39:43'!
 test07TryToSearchWithAEmptyPrefix
 
-	| stack prefix sentenceFinder |
-	prefix := Prefix with: ''.
-	
-	stack := OOStack new.
-	stack push: 'not today'.
-	stack push: 'winning eleven'.
-	stack push: 'valar morghulis'.
-	stack push: 'Winter is coming'.
-	
-	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	| prefix sentenceFinder |
+	prefix := ''.
+		
+	sentenceFinder := SentenceFinderByPrefix newWith: variousElementsStack .
 	
 	self
 		should: [ sentenceFinder find: prefix ]
 		raise: Error
 		withExceptionDo: [ :anError |
-			self assert: anError messageText = InvalidPrefix sendInvalidPrefixErrorMessage ]
+			self assert: anError messageText = SentenceFinderByPrefix sendInvalidPrefixErrorMessage ]
 
 	
 	
 	! !
 
 
-!SentenceFinderByPrefixTest methodsFor: 'TestStackOrder' stamp: 'AMV 11/2/2021 23:46:15'!
-test06xxx
+!SentenceFinderByPrefixTest methodsFor: 'TestStackOrder' stamp: 'AMV 11/3/2021 01:35:03'!
+setUp
+	emptyStack := OOStack new.
+	
+	oneElementStack := OOStack new.
+	oneElementStack push: 'winter is coming'.
+	
+	variousElementsStack := OOStack new.
+	variousElementsStack push: 'winter is coming'.
+	variousElementsStack push: 'winning eleven'.
+	variousElementsStack push: 'inventaron el var'.
+	variousElementsStack push: 'Winter is coming'.! !
 
-	| stack prefix findedSentenceCollection sentenceFinder |
-	prefix := Prefix with: 'win'.
+!SentenceFinderByPrefixTest methodsFor: 'TestStackOrder' stamp: 'AMV 11/3/2021 01:42:12'!
+test08CheckStackWontModifyItsOrderBySearch
+
+	| prefix sentenceFinder |
+	prefix := 'win'.
 	
-	stack := OOStack new.
-	stack push: 'not today'.
-	stack push: 'winning eleven'.
-	stack push: 'valar morghulis'.
-	stack push: 'Winter is coming'.
+	sentenceFinder := SentenceFinderByPrefix newWith: variousElementsStack .
+	sentenceFinder find: prefix.
 	
-	sentenceFinder := SentenceFinderByPrefix newWith: stack.
-	findedSentenceCollection := sentenceFinder find: prefix.
+	self assert: 'Winter is coming' equals: variousElementsStack pop.
+	self assert:  'inventaron el var' equals: variousElementsStack pop.
+	self assert: 'winning eleven' equals: variousElementsStack pop.
+	self assert: 'winter is coming' equals: variousElementsStack pop.
 	
-	self assert: 'Winter is coming' equals: stack pop.
-	self assert:  'valar morghulis' equals: stack pop.
-	self assert: 'winning eleven' equals: stack pop.
-	self assert: 'not today' equals: stack pop.
+	"volvemos a pushear los elementos para poder seguir generando futuros tests"
+	variousElementsStack push: 'winter is coming'.
+	variousElementsStack push: 'winning eleven'.
+	variousElementsStack push: 'inventaron el var'.
+	variousElementsStack push: 'Winter is coming'.
 	
 	
 	! !
 
 
-!classDefinition: #HanoiTowerElement category: 'Stack-Exercise'!
-Object subclass: #HanoiTowerElement
+!classDefinition: #Nodes category: 'Stack-Exercise'!
+Object subclass: #Nodes
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
 
-!classDefinition: #HanoiTowerBase category: 'Stack-Exercise'!
-HanoiTowerElement subclass: #HanoiTowerBase
+!classDefinition: #BaseNode category: 'Stack-Exercise'!
+Nodes subclass: #BaseNode
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!HanoiTowerBase methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:27'!
+!BaseNode methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:27'!
 data
 	^ self error: OOStack stackEmptyErrorDescription! !
 
-!HanoiTowerBase methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:33'!
+!BaseNode methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:33'!
 isEmpty
 	^ true! !
 
 
-!classDefinition: #HanoiTowerDataRing category: 'Stack-Exercise'!
-HanoiTowerElement subclass: #HanoiTowerDataRing
+!classDefinition: #TopNode category: 'Stack-Exercise'!
+Nodes subclass: #TopNode
 	instanceVariableNames: 'storedData imOverTo'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!HanoiTowerDataRing methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:15'!
+!TopNode methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:15'!
 data
 	^ storedData ! !
 
-!HanoiTowerDataRing methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:20'!
+!TopNode methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:20'!
 isEmpty
 	^ false! !
 
-!HanoiTowerDataRing methodsFor: 'public' stamp: 'RV 11/1/2021 23:44:13'!
-putOverTo: aHanoiDataRingToBePuttedBelow
-	imOverTo := aHanoiDataRingToBePuttedBelow.
+!TopNode methodsFor: 'public' stamp: 'AMV 11/3/2021 01:28:36'!
+putOverTo: aNodeToBePuttedBelow
+	imOverTo := aNodeToBePuttedBelow.
 	! !
 
-!HanoiTowerDataRing methodsFor: 'public' stamp: 'RV 11/1/2021 21:11:58'!
+!TopNode methodsFor: 'public' stamp: 'RV 11/1/2021 21:11:58'!
 whoIsBelowMe
 	^ imOverTo 
 		! !
 
 
-!HanoiTowerDataRing methodsFor: 'private' stamp: 'RV 11/2/2021 01:11:15'!
-insert: aDataToBeStoredInTheDataRing
-	storedData := aDataToBeStoredInTheDataRing! !
+!TopNode methodsFor: 'private' stamp: 'AMV 11/3/2021 01:28:15'!
+insert: aDataToBeStoredInNode
+	storedData := aDataToBeStoredInNode! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'HanoiTowerDataRing class' category: 'Stack-Exercise'!
-HanoiTowerDataRing class
+!classDefinition: 'TopNode class' category: 'Stack-Exercise'!
+TopNode class
 	instanceVariableNames: ''!
 
-!HanoiTowerDataRing class methodsFor: 'as yet unclassified' stamp: 'RV 11/2/2021 00:03:00'!
+!TopNode class methodsFor: 'as yet unclassified' stamp: 'RV 11/2/2021 00:03:00'!
 newWith: dataInsideTheBox
 	^self new insert: dataInsideTheBox! !
 
 
 !classDefinition: #OOStack category: 'Stack-Exercise'!
 Object subclass: #OOStack
-	instanceVariableNames: 'topHanoiElement size'
+	instanceVariableNames: 'stackTop size'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/2/2021 01:25:45'!
+!OOStack methodsFor: 'public' stamp: 'AMV 11/3/2021 01:24:57'!
 isEmpty
-	^topHanoiElement isEmpty.! !
+	^stackTop isEmpty.! !
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/2/2021 01:21:26'!
+!OOStack methodsFor: 'public' stamp: 'AMV 11/3/2021 01:24:10'!
 pop
 	| dataToPop|	
 	
 	dataToPop := self top.
-	self removeTopDataRing.
+	self removeTopNode.
 	^dataToPop! !
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/2/2021 01:15:55'!
+!OOStack methodsFor: 'public' stamp: 'AMV 11/3/2021 01:24:27'!
 push: dataToStackInTheTop
-	self stackNewDataRing: (HanoiTowerDataRing newWith: dataToStackInTheTop).
+	self stackNewNode: (TopNode newWith: dataToStackInTheTop).
 	! !
 
 !OOStack methodsFor: 'public' stamp: 'RV 11/1/2021 20:53:54'!
 size
 	^size! !
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/2/2021 01:25:45'!
+!OOStack methodsFor: 'public' stamp: 'AMV 11/3/2021 01:24:57'!
 top
-	^topHanoiElement data! !
+	^stackTop data! !
 
 
-!OOStack methodsFor: 'private' stamp: 'RV 11/2/2021 01:25:45'!
+!OOStack methodsFor: 'private' stamp: 'AMV 11/3/2021 01:24:57'!
 initialize
-	topHanoiElement := HanoiTowerBase new.
+	stackTop := BaseNode new.
 	size := 0.! !
 
-!OOStack methodsFor: 'private' stamp: 'RV 11/2/2021 01:25:45'!
-removeTopDataRing
-	topHanoiElement  := topHanoiElement whoIsBelowMe.
+!OOStack methodsFor: 'private' stamp: 'AMV 11/3/2021 01:24:57'!
+removeTopNode
+	stackTop  := stackTop whoIsBelowMe.
 	size := size - 1.! !
 
-!OOStack methodsFor: 'private' stamp: 'RV 11/2/2021 01:25:45'!
-stackNewDataRing: newDataRing
-	newDataRing putOverTo: topHanoiElement.
-	topHanoiElement := newDataRing.	
+!OOStack methodsFor: 'private' stamp: 'AMV 11/3/2021 01:27:54'!
+stackNewNode: aNode
+	aNode putOverTo: stackTop.
+	stackTop := aNode.	
 	size := size +1.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
@@ -436,107 +419,6 @@ stackEmptyErrorDescription
 	^ 'Stack is empty'! !
 
 
-!classDefinition: #Prefix category: 'Stack-Exercise'!
-Object subclass: #Prefix
-	instanceVariableNames: 'prefix'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!Prefix methodsFor: 'as yet unclassified' stamp: 'AMV 11/2/2021 23:41:57'!
-initializeWith: aPrefix
-	prefix := aPrefix ! !
-
-!Prefix methodsFor: 'as yet unclassified' stamp: 'AMV 11/2/2021 22:51:54'!
-searchInStack: aStack
-	self subclassResponsibility! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Prefix class' category: 'Stack-Exercise'!
-Prefix class
-	instanceVariableNames: ''!
-
-!Prefix class methodsFor: 'as yet unclassified' stamp: 'AMV 11/2/2021 23:36:19'!
-correspondsTo: aPrefix
-	self subclassResponsibility ! !
-
-!Prefix class methodsFor: 'as yet unclassified' stamp: 'AMV 11/2/2021 23:35:24'!
-with: aPrefix
-	| allSubclasesOfPrefix classToBeIntanciated |
-	allSubclasesOfPrefix := Prefix subclasses .	
-	classToBeIntanciated := allSubclasesOfPrefix detect: [:eachClass |
-		eachClass correspondsTo: aPrefix
-		 ].
-	
-	^ classToBeIntanciated new initializeWith: aPrefix! !
-
-
-!classDefinition: #InvalidPrefix category: 'Stack-Exercise'!
-Prefix subclass: #InvalidPrefix
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!InvalidPrefix methodsFor: 'as yet unclassified' stamp: 'AMV 11/2/2021 23:43:19'!
-searchInStack: aStack
-	self error: self class sendInvalidPrefixErrorMessage! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'InvalidPrefix class' category: 'Stack-Exercise'!
-InvalidPrefix class
-	instanceVariableNames: ''!
-
-!InvalidPrefix class methodsFor: 'as yet unclassified' stamp: 'AMV 11/2/2021 23:37:39'!
-correspondsTo: aPrefix
-	^(aPrefix includesSubString: ' ') or: 	(aPrefix isEmpty)! !
-
-!InvalidPrefix class methodsFor: 'as yet unclassified' stamp: 'AMV 11/2/2021 23:43:39'!
-sendInvalidPrefixErrorMessage
-	^'Invalid Prefix'! !
-
-
-!classDefinition: #ValidPrefix category: 'Stack-Exercise'!
-Prefix subclass: #ValidPrefix
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!ValidPrefix methodsFor: 'as yet unclassified' stamp: 'AMV 11/2/2021 23:32:58'!
-searchInStack: aStack
-	| sentenceToAnalize sentencesWithSamePrefix temporalStack|
-	
-	temporalStack := OOStack new.
-	sentencesWithSamePrefix := OrderedCollection new.
-	
-	[aStack isEmpty ] whileFalse: [
-		sentenceToAnalize := aStack pop.
-		(sentenceToAnalize beginsWith: prefix) ifTrue: [
-					sentencesWithSamePrefix			add: sentenceToAnalize.
-				].
-		temporalStack push: sentenceToAnalize.
-		].
-	
-	[ temporalStack isEmpty ] whileFalse: [
-		 aStack push: (temporalStack pop)
-		] .
-	
-	^sentencesWithSamePrefix! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'ValidPrefix class' category: 'Stack-Exercise'!
-ValidPrefix class
-	instanceVariableNames: ''!
-
-!ValidPrefix class methodsFor: 'as yet unclassified' stamp: 'AMV 11/2/2021 23:39:20'!
-correspondsTo: aPrefix
-	^((aPrefix includesSubString: ' ') or: 	(aPrefix isEmpty)) not! !
-
-
 !classDefinition: #SentenceFinderByPrefix category: 'Stack-Exercise'!
 Object subclass: #SentenceFinderByPrefix
 	instanceVariableNames: 'sentencesToBeSearched'
@@ -544,39 +426,42 @@ Object subclass: #SentenceFinderByPrefix
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AMV 11/3/2021 00:07:45'!
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AMV 11/3/2021 01:20:10'!
 find: prefix
-	^prefix searchInStack: sentencesToBeSearched.
 	
-"	
-	| sentenceToAnalize sentencesWithSamePrefix temporalStack|
-
-	(self validatePrefix: prefix) ifFalse:[
-		^OrderedCollection new
-		].
-	temporalStack := OOStack new.
-	sentencesWithSamePrefix := OrderedCollection new.
-	
-	[sentencesToBeSearched isEmpty ] whileFalse: [
-		sentenceToAnalize := sentencesToBeSearched pop.
-		prefix = (sentenceToAnalize copyFrom: 1 to: (prefix size)) ifTrue: [
-					sentencesWithSamePrefix			add: sentenceToAnalize.
-				].
-		temporalStack push: sentenceToAnalize.
-		].
-	
-	[ temporalStack isEmpty ] whileFalse: [
-		 sentencesToBeSearched push: (temporalStack pop)
-		] .
-	
-	^sentencesWithSamePrefix
-"! !
+	| allSentences |
+	self validatePrefix: prefix.
+	allSentences := self saveAllElemetsWithoutModifyingTheStack.
+	^allSentences select: [:s | s beginsWith: prefix ].! !
 
 
 !SentenceFinderByPrefix methodsFor: 'private' stamp: 'AMV 11/3/2021 00:08:03'!
 initializeAndAttach: anOOStack 
 	sentencesToBeSearched := anOOStack.
 ! !
+
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'AMV 11/3/2021 01:18:17'!
+saveAllElemetsWithoutModifyingTheStack
+	
+	| allSentences temporalStack |
+	temporalStack := OOStack new.
+	allSentences := OrderedCollection new.
+	
+	[sentencesToBeSearched isEmpty ] whileFalse: [
+		temporalStack push: sentencesToBeSearched pop.
+		allSentences add: temporalStack top.
+		].
+		
+	[ temporalStack isEmpty ] whileFalse: [
+		 sentencesToBeSearched push: (temporalStack pop)
+		].
+	
+	^allSentences
+	! !
+
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'AMV 11/3/2021 01:09:07'!
+validatePrefix: aPrefix
+	((aPrefix includesSubString: ' ') or: 	(aPrefix isEmpty)) ifTrue: [^self error: self class sendInvalidPrefixErrorMessage] ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -587,3 +472,8 @@ SentenceFinderByPrefix class
 !SentenceFinderByPrefix class methodsFor: 'casing' stamp: 'RV 11/2/2021 20:55:48'!
 newWith: anOOStack 
 	^ self new initializeAndAttach: anOOStack! !
+
+
+!SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'AMV 11/3/2021 01:06:00'!
+sendInvalidPrefixErrorMessage
+	^'Invalid Prefix'! !
