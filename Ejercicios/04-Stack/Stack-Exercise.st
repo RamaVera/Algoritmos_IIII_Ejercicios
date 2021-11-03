@@ -144,9 +144,155 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
+!SentenceFinderByPrefixTest methodsFor: 'TestWithEmptyStack' stamp: 'RV 11/2/2021 20:45:16'!
+test01CannotFindASentenceWithEmptyStack
+
+	| stack prefix findedSentenceCollection sentenceFinder |
+	prefix := 'win'.
+	
+	stack := OOStack new.
+	
+	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	findedSentenceCollection := sentenceFinder find: prefix.
+	
+	self assert: findedSentenceCollection isEmpty.
+	
+	
+	! !
+
+
+!SentenceFinderByPrefixTest methodsFor: 'TestWithOnlyOneElementInStack' stamp: 'RV 11/2/2021 20:37:13'!
+test02CannotFindASentenceWithDifferentPrefix
+
+	| stack prefix findedSentenceCollection sentenceFinder |
+	prefix := 'win'.
+	
+	stack := OOStack new.
+	stack push: 'Winter is coming'.
+	
+	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	findedSentenceCollection := sentenceFinder find: prefix.
+	
+	self assert: findedSentenceCollection isEmpty.
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'TestWithOnlyOneElementInStack' stamp: 'RV 11/2/2021 20:36:44'!
+test03FindASingleSentenceWithTheSamePrefix
+
+	| stack prefix findedSentenceCollection sentenceFinder |
+	prefix := 'win'.
+	
+	stack := OOStack new.
+	stack push: 'winter is coming'.
+	
+	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	findedSentenceCollection := sentenceFinder find: prefix.
+	
+	self assert: 'winter is coming' equals: (findedSentenceCollection at:1). 
+	
+	
+	! !
+
+
+!SentenceFinderByPrefixTest methodsFor: 'TestWithTwoOrMoreElementsInStack' stamp: 'RV 11/2/2021 20:37:24'!
+test04FindTwoSentencesWithTheSamePrefix
+
+	| stack prefix findedSentenceCollection sentenceFinder |
+	prefix := 'win'.
+	
+	stack := OOStack new.
+	stack push: 'winter is coming'.
+	stack push: 'winning eleven'.
+	
+	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	findedSentenceCollection := sentenceFinder find: prefix.
+	
+	self assert: 'winning eleven' equals: (findedSentenceCollection at:1). 
+	self assert: 'winter is coming'  equals: (findedSentenceCollection at:2). 
+	
+	
+	! !
+
+!SentenceFinderByPrefixTest methodsFor: 'TestWithTwoOrMoreElementsInStack' stamp: 'RV 11/2/2021 21:28:58'!
+test05FindOneSentenceWithTheSamePrefixOnAStackWithMultipleDataStoraged
+
+	| stack prefix findedSentenceCollection sentenceFinder |
+	prefix := 'win'.
+	
+	stack := OOStack new.
+	stack push: 'not today'.
+	stack push: 'winning eleven'.
+	stack push: 'valar morghulis'.
+	stack push: 'Winter is coming'.
+	
+	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	findedSentenceCollection := sentenceFinder find: prefix.
+	
+	self assert: 'winning eleven' equals: (findedSentenceCollection at:1). 
+	self assert: findedSentenceCollection size = 1
+	
+	
+	! !
+
+
+!SentenceFinderByPrefixTest methodsFor: 'TestBadPrefix' stamp: 'RV 11/2/2021 21:31:47'!
+test06TryToSearchWithASpacePrefix
+
+	| stack prefix findedSentenceCollection sentenceFinder |
+	prefix := 'valar mor'.
+	
+	stack := OOStack new.
+	stack push: 'not today'.
+	stack push: 'winning eleven'.
+	stack push: 'valar morghulis'.
+	stack push: 'Winter is coming'.
+	
+	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	findedSentenceCollection := sentenceFinder find: prefix.
+	
+	self assert: findedSentenceCollection isEmpty.
+
+	
+	
+	! !
+
+
+!SentenceFinderByPrefixTest methodsFor: 'TestStackOrder' stamp: 'RV 11/2/2021 21:01:20'!
+test06xxx
+
+	| stack prefix findedSentenceCollection sentenceFinder |
+	prefix := 'win'.
+	
+	stack := OOStack new.
+	stack push: 'not today'.
+	stack push: 'winning eleven'.
+	stack push: 'valar morghulis'.
+	stack push: 'Winter is coming'.
+	
+	sentenceFinder := SentenceFinderByPrefix newWith: stack.
+	findedSentenceCollection := sentenceFinder find: prefix.
+	
+	self assert: 'Winter is coming' equals: stack pop.
+	self assert:  'valar morghulis' equals: stack pop.
+	self assert: 'winning eleven' equals: stack pop.
+	self assert: 'not today' equals: stack pop.
+	
+	
+	! !
+
+
+!classDefinition: #HanoiTowerElement category: 'Stack-Exercise'!
+Object subclass: #HanoiTowerElement
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
 
 !classDefinition: #HanoiTowerBase category: 'Stack-Exercise'!
-Object subclass: #HanoiTowerBase
+HanoiTowerElement subclass: #HanoiTowerBase
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -162,7 +308,7 @@ isEmpty
 
 
 !classDefinition: #HanoiTowerDataRing category: 'Stack-Exercise'!
-Object subclass: #HanoiTowerDataRing
+HanoiTowerElement subclass: #HanoiTowerDataRing
 	instanceVariableNames: 'storedData imOverTo'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -265,7 +411,53 @@ stackEmptyErrorDescription
 
 !classDefinition: #SentenceFinderByPrefix category: 'Stack-Exercise'!
 Object subclass: #SentenceFinderByPrefix
-	instanceVariableNames: ''
+	instanceVariableNames: 'sentencesToBeSearched'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'RV 11/2/2021 21:34:07'!
+find: prefix
+
+	| sentenceToAnalize sentencesWithSamePrefix temporalStack|
+	(self validatePrefix: prefix) ifFalse:[
+		^OrderedCollection new
+		].
+	temporalStack := OOStack new.
+	sentencesWithSamePrefix := OrderedCollection new.
+	
+	[sentencesToBeSearched isEmpty ] whileFalse: [
+		sentenceToAnalize := sentencesToBeSearched pop.
+		prefix = (sentenceToAnalize copyFrom: 1 to: (prefix size)) ifTrue: [
+					sentencesWithSamePrefix			add: sentenceToAnalize.
+				].
+		temporalStack push: sentenceToAnalize.
+		].
+	
+	[ temporalStack isEmpty ] whileFalse: [
+		 sentencesToBeSearched push: (temporalStack pop)
+		] .
+	
+	^sentencesWithSamePrefix
+	
+	! !
+
+!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'RV 11/2/2021 21:39:08'!
+validatePrefix: aPrefix
+	aPrefix indexOf: $  ifAbsent: [^true].
+	^ false! !
+
+
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'RV 11/2/2021 20:55:48'!
+initializeAndAttach: anOOStack 
+	sentencesToBeSearched := anOOStack .! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'SentenceFinderByPrefix class' category: 'Stack-Exercise'!
+SentenceFinderByPrefix class
+	instanceVariableNames: ''!
+
+!SentenceFinderByPrefix class methodsFor: 'casing' stamp: 'RV 11/2/2021 20:55:48'!
+newWith: anOOStack 
+	^ self new initializeAndAttach: anOOStack! !
