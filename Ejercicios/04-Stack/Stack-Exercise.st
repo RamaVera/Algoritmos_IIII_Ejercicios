@@ -271,15 +271,19 @@ OOStack subclass: #OOStackLimited
 isFull
 	^ content size = maxElementsAllowed ! !
 
-!OOStackLimited methodsFor: 'public' stamp: 'RV 11/4/2021 14:36:00'!
+!OOStackLimited methodsFor: 'public' stamp: 'RV 11/4/2021 15:01:15'!
 pop
+	| dataToBePopped |
+	
 	stateOfStack := StackStateWithData new.
-	^ super pop.
-! !
+	dataToBePopped := super pop..
 
-!OOStackLimited methodsFor: 'public' stamp: 'RV 11/4/2021 14:19:23'!
+	^dataToBePopped ! !
+
+!OOStackLimited methodsFor: 'public' stamp: 'RV 11/4/2021 14:56:38'!
 push: aDataToBePushed
 	stateOfStack allowsToPush: aDataToBePushed On: self.
+	stateOfStack := StackStateWithData new.
 	self verifyIsStackIsFullAfterPushing.! !
 
 
