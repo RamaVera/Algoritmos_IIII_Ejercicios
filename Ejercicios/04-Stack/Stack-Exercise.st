@@ -144,7 +144,7 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefixTest methodsFor: 'test -private' stamp: 'AMV 11/3/2021 01:35:03'!
+!SentenceFinderByPrefixTest methodsFor: 'test -private' stamp: 'RV 11/3/2021 21:45:41'!
 setUp
 	emptyStack := OOStack new.
 	
@@ -153,61 +153,62 @@ setUp
 	
 	variousElementsStack := OOStack new.
 	variousElementsStack push: 'winter is coming'.
+	variousElementsStack push: 'valar morgulis'.
 	variousElementsStack push: 'winning eleven'.
 	variousElementsStack push: 'inventaron el var'.
 	variousElementsStack push: 'Winter is coming'.! !
 
 
-!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'AMV 11/3/2021 12:04:41'!
+!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'RV 11/3/2021 21:49:01'!
 test01CannotFindASentenceWithEmptyStack
 
 	| prefix findedSentenceCollection sentenceFinder |
 	prefix := 'win'.
 	
 	sentenceFinder := SentenceFinderByPrefix new.
-	findedSentenceCollection := sentenceFinder findPrefix: prefix onStack: emptyStack .
+	findedSentenceCollection := sentenceFinder find: prefix on: emptyStack .
 	
 	self assert: findedSentenceCollection isEmpty.
 	
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'AMV 11/3/2021 12:04:41'!
+!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'RV 11/3/2021 21:49:01'!
 test02CannotFindASentenceWithDifferentPrefix
 
 	| prefix findedSentenceCollection sentenceFinder |
 	prefix := 'Win'.
 	
 	sentenceFinder := SentenceFinderByPrefix new.
-	findedSentenceCollection := sentenceFinder findPrefix: prefix onStack: oneElementStack.
+	findedSentenceCollection := sentenceFinder find: prefix on: oneElementStack.
 	
 	self assert: findedSentenceCollection isEmpty.
 	
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'AMV 11/3/2021 12:04:41'!
+!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'RV 11/3/2021 21:49:01'!
 test03FindASingleSentenceWithTheSamePrefix
 
 	| prefix findedSentenceCollection sentenceFinder |
 	prefix := 'win'.	
 	
 	sentenceFinder := SentenceFinderByPrefix new.
-	findedSentenceCollection := sentenceFinder findPrefix: prefix onStack: oneElementStack.
+	findedSentenceCollection := sentenceFinder find: prefix on: oneElementStack.
 	
 	self assert: findedSentenceCollection includes: 'winter is coming'.  
 	
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'AMV 11/3/2021 12:04:41'!
+!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'RV 11/3/2021 21:49:01'!
 test04FindTwoSentencesWithTheSamePrefix
 
 	| prefix findedSentenceCollection sentenceFinder |
 	prefix := 'win'.	
 	
 	sentenceFinder := SentenceFinderByPrefix new.
-	findedSentenceCollection := sentenceFinder findPrefix: prefix onStack: variousElementsStack.
+	findedSentenceCollection := sentenceFinder find: prefix on: variousElementsStack.
 	
 	self assert: findedSentenceCollection includes: 'winter is coming'.  
 	self assert: findedSentenceCollection includes: 'winning eleven'.  
@@ -215,14 +216,14 @@ test04FindTwoSentencesWithTheSamePrefix
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'AMV 11/3/2021 12:04:41'!
+!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'RV 11/3/2021 21:49:01'!
 test05FindOneSentenceWithTheSamePrefixOnAStackWithMultipleDataStoraged
 
 	| prefix findedSentenceCollection sentenceFinder |
 	prefix := 'winn'.	
 	
 	sentenceFinder := SentenceFinderByPrefix new.
-	findedSentenceCollection := sentenceFinder findPrefix: prefix onStack: variousElementsStack.
+	findedSentenceCollection := sentenceFinder find: prefix on: variousElementsStack.
 	
 	self assert: findedSentenceCollection includes: 'winning eleven'.  
 	self assert: findedSentenceCollection size = 1
@@ -230,7 +231,7 @@ test05FindOneSentenceWithTheSamePrefixOnAStackWithMultipleDataStoraged
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'AMV 11/3/2021 12:04:41'!
+!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'RV 11/3/2021 21:49:01'!
 test06TryToSearchWithASpacePrefix
 
 	| prefix sentenceFinder |
@@ -239,7 +240,7 @@ test06TryToSearchWithASpacePrefix
 	sentenceFinder := SentenceFinderByPrefix new.
 	
 	self
-		should: [ sentenceFinder findPrefix: prefix onStack: variousElementsStack]
+		should: [ sentenceFinder find: prefix on: variousElementsStack]
 		raise: Error
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = SentenceFinderByPrefix sendInvalidPrefixErrorMessage ]
@@ -248,7 +249,7 @@ test06TryToSearchWithASpacePrefix
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'AMV 11/3/2021 12:04:41'!
+!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'RV 11/3/2021 21:49:01'!
 test07TryToSearchWithAEmptyPrefix
 
 	| prefix sentenceFinder |
@@ -257,7 +258,7 @@ test07TryToSearchWithAEmptyPrefix
 	sentenceFinder := SentenceFinderByPrefix new.
 	
 	self
-		should: [ sentenceFinder findPrefix: prefix onStack: variousElementsStack ]
+		should: [ sentenceFinder find: prefix on: variousElementsStack ]
 		raise: Error
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = SentenceFinderByPrefix sendInvalidPrefixErrorMessage ]
@@ -266,18 +267,19 @@ test07TryToSearchWithAEmptyPrefix
 	
 	! !
 
-!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'AMV 11/3/2021 12:04:41'!
+!SentenceFinderByPrefixTest methodsFor: 'test' stamp: 'RV 11/3/2021 21:49:01'!
 test08CheckStackWontModifyItsOrderBySearch
 
 	| prefix sentenceFinder |
 	prefix := 'win'.
 	
 	sentenceFinder := SentenceFinderByPrefix new.
-	sentenceFinder findPrefix: prefix onStack: variousElementsStack.
+	sentenceFinder find: prefix on: variousElementsStack.
 	
 	self assert: 'Winter is coming' equals: variousElementsStack pop.
 	self assert:  'inventaron el var' equals: variousElementsStack pop.
 	self assert: 'winning eleven' equals: variousElementsStack pop.
+	self assert: 'valar morgulis' equals: variousElementsStack pop.
 	self assert: 'winter is coming' equals: variousElementsStack pop.
 	
 	"volvemos a pushear los elementos para poder seguir generando futuros tests"
@@ -374,10 +376,15 @@ pop
 	self removeTopNode.
 	^dataToPop! !
 
-!OOStack methodsFor: 'public' stamp: 'AMV 11/3/2021 01:24:27'!
+!OOStack methodsFor: 'public' stamp: 'RV 11/3/2021 22:33:40'!
 push: dataToStackInTheTop
-	self stackNewNode: (TopNode newWith: dataToStackInTheTop).
-	! !
+	| maxSizeDefined |
+	(size == maxSizeDefined) 
+	ifTrue:[
+		self stackNewNode: (TopNode newWith: dataToStackInTheTop)]
+	ifFalse:[
+		self stackNewNode: (TopNode newWith: dataToStackInTheTop).
+	]! !
 
 !OOStack methodsFor: 'public' stamp: 'RV 11/1/2021 20:53:54'!
 size
@@ -423,51 +430,55 @@ Object subclass: #SentenceFinderByPrefix
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AMV 11/3/2021 11:44:14'!
-find: prefix onQueue: aQueue 
-	
-	"
-	code
-	"! !
-
-!SentenceFinderByPrefix methodsFor: 'as yet unclassified' stamp: 'AMV 11/3/2021 12:04:41'!
-findPrefix: prefix onStack: aStack 
+!SentenceFinderByPrefix methodsFor: 'finder' stamp: 'RV 11/3/2021 22:11:28'!
+find: prefix on: aStack 
 	
 	| allSentences |
 	self validatePrefix: prefix.
-	allSentences := self saveAllElemetsWithoutModifying: aStack.
-	^allSentences select: [:s | s beginsWith: prefix ].! !
+	allSentences := self saveAllElementsWithoutModifying: aStack.
+	^allSentences select: [:singleSentence | singleSentence beginsWith: prefix ].! !
 
 
-!SentenceFinderByPrefix methodsFor: 'private' stamp: 'AMV 11/3/2021 11:36:31'!
-saveAllElemetsWithoutModifying: aStack
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'RV 11/3/2021 22:26:02'!
+moveElementsFrom: anStackSender to: anStackReciever
+	self moveElementsFrom: anStackSender to: anStackReciever andDo:[: elementFromStack | ].! !
+
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'RV 11/3/2021 22:28:40'!
+moveElementsFrom: anStackSender to: anStackReciever andDo: anActionToDoDuringTheTransfer 
+	|temporalData |
+	
+	[anStackSender isEmpty ] whileFalse: [
+		temporalData := anStackSender pop.
+		
+		
+		anActionToDoDuringTheTransfer value: temporalData.
+		
+		
+		anStackReciever push: temporalData.
+		].! !
+
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'RV 11/3/2021 22:25:06'!
+saveAllElementsWithoutModifying: aStack
 	
 	| allSentences temporalStack |
 	temporalStack := OOStack new.
 	allSentences := OrderedCollection new.
 	
-	[aStack isEmpty ] whileFalse: [
-		temporalStack push: aStack pop.
-		allSentences add: temporalStack top.
-		].
-		
-	[ temporalStack isEmpty ] whileFalse: [
-		 aStack push: (temporalStack pop)
-		].
+	self moveElementsFrom: aStack to: temporalStack andDo:[: elementFromStack | allSentences add: elementFromStack].
+	self moveElementsFrom: temporalStack to: aStack.
 	
 	^allSentences
 	! !
 
-!SentenceFinderByPrefix methodsFor: 'private' stamp: 'AMV 11/3/2021 01:09:07'!
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'RV 11/3/2021 21:50:37'!
 validatePrefix: aPrefix
-	((aPrefix includesSubString: ' ') or: 	(aPrefix isEmpty)) ifTrue: [^self error: self class sendInvalidPrefixErrorMessage] ! !
+	((aPrefix includesSubString: ' ') or: 	aPrefix isEmpty ) ifTrue: [^self error: self class sendInvalidPrefixErrorMessage] ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'SentenceFinderByPrefix class' category: 'Stack-Exercise'!
 SentenceFinderByPrefix class
 	instanceVariableNames: ''!
-
 
 !SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'AMV 11/3/2021 01:06:00'!
 sendInvalidPrefixErrorMessage
