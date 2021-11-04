@@ -5,53 +5,53 @@ TestCase subclass: #OOStackTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStackTest methodsFor: 'test' stamp: 'HernanWilkinson 5/7/2012 11:30'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:52:15'!
 test01StackShouldBeEmptyWhenCreated
 
 	| stack |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	
 	self assert: stack isEmpty! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:29:55'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:52:23'!
 test02PushAddElementsToTheStack
 
 	| stack |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	stack push: 'something'.
 	
 	self deny: stack isEmpty! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:01'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:52:33'!
 test03PopRemovesElementsFromTheStack
 
 	| stack |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	stack push: 'something'.
 	stack pop.
 	
 	self assert: stack isEmpty! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:09'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:52:39'!
 test04PopReturnsLastPushedObject
 
 	| stack pushedObject |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	pushedObject := 'something'.
 	stack push: pushedObject.
 	
 	self assert: stack pop = pushedObject! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:48'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:52:47'!
 test05StackBehavesLIFO
 
 	| stack firstPushedObject secondPushedObject |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	firstPushedObject := 'first'.
 	secondPushedObject := 'second'.
 	
@@ -63,12 +63,12 @@ test05StackBehavesLIFO
 	self assert: stack isEmpty 
 	! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:20'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:52:56'!
 test06TopReturnsLastPushedObject
 
 	| stack pushedObject |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	pushedObject := 'something'.
 	
 	stack push: pushedObject.
@@ -76,12 +76,12 @@ test06TopReturnsLastPushedObject
 	self assert: stack top = pushedObject.
 	! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:24'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:53:06'!
 test07TopDoesNotRemoveObjectFromStack
 
 	| stack pushedObject |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	pushedObject := 'something'.
 	
 	stack push: pushedObject.
@@ -91,12 +91,12 @@ test07TopDoesNotRemoveObjectFromStack
 	self assert: stack size = 1.
 	! !
 
-!OOStackTest methodsFor: 'test' stamp: 'HAW 4/14/2017 22:48:26'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:53:13'!
 test08CanNotPopWhenThereAreNoObjectsInTheStack
 
 	| stack  |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	self
 		should: [ stack pop ]
 		raise: Error - MessageNotUnderstood 
@@ -105,12 +105,12 @@ test08CanNotPopWhenThereAreNoObjectsInTheStack
 		
 ! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:31'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:53:22'!
 test09CanNotPopWhenThereAreNoObjectsInTheStackAndTheStackHadObjects
 
 	| stack  |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	stack push: 'something'.
 	stack pop.
 	
@@ -122,12 +122,12 @@ test09CanNotPopWhenThereAreNoObjectsInTheStackAndTheStackHadObjects
 		
 ! !
 
-!OOStackTest methodsFor: 'test' stamp: 'HAW 4/14/2017 22:48:44'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:53:31'!
 test10CanNotTopWhenThereAreNoObjectsInTheStack
 
 	| stack  |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	self
 		should: [ stack top ]
 		raise: Error - MessageNotUnderstood 
@@ -136,10 +136,10 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 		
 ! !
 
-!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 14:37:54'!
+!OOStackTest methodsFor: 'test' stamp: 'RV 11/4/2021 15:53:45'!
 test11CanNotPushMoreThanTheLimitOfElementsOnALimitedStack
 	| limitedStack |
-	limitedStack _ OOStackLimited createLimitedBy: 1.
+	limitedStack := OOStackLimited createLimitedBy: 1.
 	limitedStack push: 'first'.
 	self
 		should: [ limitedStack push: 'second' ]
@@ -203,19 +203,13 @@ initialize
 isEmpty
 	^content isEmpty.! !
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 13:11:51'!
+!OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 15:41:55'!
 pop 
-	| dataToBePopped |
-	dataToBePopped := stateOfStack allowsAPopOn: self.
-	
-	self verifyIsStackEmptyAfterPoping.
+	self subclassResponsibility.! !
 
-	^dataToBePopped! !
-
-!OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 12:56:36'!
+!OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 15:42:07'!
 push: aString 
-	content add: aString.
-	stateOfStack := StackStateWithData new! !
+	self subclassResponsibility.! !
 
 !OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 01:30:18'!
 size
@@ -271,14 +265,16 @@ OOStack subclass: #OOStackLimited
 isFull
 	^ content size = maxElementsAllowed ! !
 
-!OOStackLimited methodsFor: 'public' stamp: 'RV 11/4/2021 15:01:15'!
+!OOStackLimited methodsFor: 'public' stamp: 'RV 11/4/2021 15:46:34'!
 pop
 	| dataToBePopped |
 	
-	stateOfStack := StackStateWithData new.
-	dataToBePopped := super pop..
+	dataToBePopped := stateOfStack allowsAPopOn: self.
+	
+	self verifyIsStackEmptyAfterPoping.
+	self verifyIsStackIsWithDataAfterPopingAFullStack.
 
-	^dataToBePopped ! !
+	^dataToBePopped! !
 
 !OOStackLimited methodsFor: 'public' stamp: 'RV 11/4/2021 14:56:38'!
 push: aDataToBePushed
@@ -287,8 +283,9 @@ push: aDataToBePushed
 	self verifyIsStackIsFullAfterPushing.! !
 
 
-!OOStackLimited methodsFor: 'private' stamp: 'RV 11/4/2021 14:12:38'!
+!OOStackLimited methodsFor: 'private' stamp: 'RV 11/4/2021 15:44:18'!
 initializeWith: maxSizeOfStack
+	super initialize.
 	maxElementsAllowed := maxSizeOfStack ! !
 
 !OOStackLimited methodsFor: 'private' stamp: 'RV 11/4/2021 14:33:50'!
@@ -303,6 +300,10 @@ pushWithSpaceOnStack: aDataToBePushed
 !OOStackLimited methodsFor: 'private' stamp: 'RV 11/4/2021 13:56:56'!
 verifyIsStackIsFullAfterPushing
 	^ self isFull ifTrue:[ 	stateOfStack := FullStackState new.	]! !
+
+!OOStackLimited methodsFor: 'private' stamp: 'RV 11/4/2021 15:47:40'!
+verifyIsStackIsWithDataAfterPopingAFullStack
+	^ self isFull ifFalse:[ 	stateOfStack := StackStateWithData new.	]! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -328,6 +329,39 @@ stackEmptyErrorDescription
 createLimitedBy: maxSizeOfStack
 	maxSizeOfStack<= 0 ifTrue: [ ^ self error: self sendinvalidSizeOfStackMessage ].
 	^ OOStackLimited new initializeWith: maxSizeOfStack.! !
+
+
+!classDefinition: #OOStackUnlimited category: 'Stack-Exercise'!
+OOStack subclass: #OOStackUnlimited
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStackUnlimited methodsFor: 'public' stamp: 'RV 11/4/2021 15:40:44'!
+pop 
+	| dataToBePopped |
+	dataToBePopped := stateOfStack allowsAPopOn: self.
+	
+	self verifyIsStackEmptyAfterPoping.
+
+	^dataToBePopped! !
+
+!OOStackUnlimited methodsFor: 'public' stamp: 'RV 11/4/2021 15:40:44'!
+push: aString 
+	content add: aString.
+	stateOfStack := StackStateWithData new! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'OOStackUnlimited class' category: 'Stack-Exercise'!
+OOStackUnlimited class
+	instanceVariableNames: ''!
+
+!OOStackUnlimited class methodsFor: 'error descriptions' stamp: 'RV 11/4/2021 15:40:45'!
+stackEmptyErrorDescription
+	
+	^ 'Stack is empty'! !
 
 
 !classDefinition: #SentenceFinderByPrefix category: 'Stack-Exercise'!
