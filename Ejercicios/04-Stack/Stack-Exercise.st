@@ -5,53 +5,53 @@ TestCase subclass: #OOStackTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStackTest methodsFor: 'test' stamp: 'HernanWilkinson 5/7/2012 11:30'!
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:07:58'!
 test01StackShouldBeEmptyWhenCreated
 
 	| stack |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	
 	self assert: stack isEmpty! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:29:55'!
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:08:10'!
 test02PushAddElementsToTheStack
 
 	| stack |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	stack push: 'something'.
 	
 	self deny: stack isEmpty! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:01'!
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:08:20'!
 test03PopRemovesElementsFromTheStack
 
 	| stack |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	stack push: 'something'.
 	stack pop.
 	
 	self assert: stack isEmpty! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:09'!
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:08:30'!
 test04PopReturnsLastPushedObject
 
 	| stack pushedObject |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	pushedObject := 'something'.
 	stack push: pushedObject.
 	
 	self assert: stack pop = pushedObject! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:48'!
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:08:46'!
 test05StackBehavesLIFO
 
 	| stack firstPushedObject secondPushedObject |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	firstPushedObject := 'first'.
 	secondPushedObject := 'second'.
 	
@@ -63,12 +63,12 @@ test05StackBehavesLIFO
 	self assert: stack isEmpty 
 	! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:20'!
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:08:50'!
 test06TopReturnsLastPushedObject
 
 	| stack pushedObject |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	pushedObject := 'something'.
 	
 	stack push: pushedObject.
@@ -76,12 +76,12 @@ test06TopReturnsLastPushedObject
 	self assert: stack top = pushedObject.
 	! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:24'!
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:08:53'!
 test07TopDoesNotRemoveObjectFromStack
 
 	| stack pushedObject |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	pushedObject := 'something'.
 	
 	stack push: pushedObject.
@@ -91,12 +91,12 @@ test07TopDoesNotRemoveObjectFromStack
 	self assert: stack size = 1.
 	! !
 
-!OOStackTest methodsFor: 'test' stamp: 'HAW 4/14/2017 22:48:26'!
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:08:56'!
 test08CanNotPopWhenThereAreNoObjectsInTheStack
 
 	| stack  |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	self
 		should: [ stack pop ]
 		raise: Error - MessageNotUnderstood 
@@ -105,12 +105,12 @@ test08CanNotPopWhenThereAreNoObjectsInTheStack
 		
 ! !
 
-!OOStackTest methodsFor: 'test' stamp: 'NR 5/13/2020 13:30:31'!
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:09:01'!
 test09CanNotPopWhenThereAreNoObjectsInTheStackAndTheStackHadObjects
 
 	| stack  |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	stack push: 'something'.
 	stack pop.
 	
@@ -122,12 +122,12 @@ test09CanNotPopWhenThereAreNoObjectsInTheStackAndTheStackHadObjects
 		
 ! !
 
-!OOStackTest methodsFor: 'test' stamp: 'HAW 4/14/2017 22:48:44'!
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:09:04'!
 test10CanNotTopWhenThereAreNoObjectsInTheStack
 
 	| stack  |
 	
-	stack := OOStack new.
+	stack := OOStackUnlimited new.
 	self
 		should: [ stack top ]
 		raise: Error - MessageNotUnderstood 
@@ -135,6 +135,54 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 			self assert: anError messageText = OOStack stackEmptyErrorDescription ]
 		
 ! !
+
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:22:08'!
+test11CanNotPushMoreThanTheLimitOfElementsOnALimitedStack
+	| stack  |
+	
+	stack := OOStackLimited createLimitedBy: 1.
+	stack push: 'first'.
+	
+	self 
+		should: [ stack push: 'second' ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = OOStackLimited sendLimitReachedMessage]
+		! !
+
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:23:04'!
+test12AfterPopingStackLimitBehavesTheSame
+	| stack  |
+	
+	stack := OOStackLimited createLimitedBy: 2.
+	stack push: 'first'.
+	stack push: 'second'.
+	stack pop.
+	stack push: 'second'.
+	self 
+		should: [stack push: 'third']
+		raise: Error
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = OOStackLimited sendLimitReachedMessage]
+		! !
+
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:23:59'!
+test13CanNotCreateAStackLimitedByCero
+	self 
+		should: [ OOStackLimited createLimitedBy: 0]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = OOStackLimited sendinvalidSizeOfStackMessage ]
+		! !
+
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:24:24'!
+test14CanNotCreateStackLimitedWithANegativeNumber
+	self 
+		should: [ OOStackLimited createLimitedBy: -1]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = OOStackLimited sendinvalidSizeOfStackMessage ]
+		! !
 
 
 !classDefinition: #SentenceFinderByPrefixTest category: 'Stack-Exercise'!
@@ -144,14 +192,14 @@ TestCase subclass: #SentenceFinderByPrefixTest
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefixTest methodsFor: 'test -private' stamp: 'RV 11/3/2021 21:45:41'!
+!SentenceFinderByPrefixTest methodsFor: 'setup' stamp: 'AMV 11/4/2021 12:10:08'!
 setUp
-	emptyStack := OOStack new.
+	emptyStack := OOStackUnlimited new.
 	
-	oneElementStack := OOStack new.
+	oneElementStack := OOStackUnlimited new.
 	oneElementStack push: 'winter is coming'.
 	
-	variousElementsStack := OOStack new.
+	variousElementsStack := OOStackUnlimited new.
 	variousElementsStack push: 'winter is coming'.
 	variousElementsStack push: 'valar morgulis'.
 	variousElementsStack push: 'winning eleven'.
@@ -376,15 +424,9 @@ pop
 	self removeTopNode.
 	^dataToPop! !
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/3/2021 22:33:40'!
+!OOStack methodsFor: 'public' stamp: 'AMV 11/4/2021 10:45:07'!
 push: dataToStackInTheTop
-	| maxSizeDefined |
-	(size == maxSizeDefined) 
-	ifTrue:[
-		self stackNewNode: (TopNode newWith: dataToStackInTheTop)]
-	ifFalse:[
-		self stackNewNode: (TopNode newWith: dataToStackInTheTop).
-	]! !
+	self subclassResponsibility ! !
 
 !OOStack methodsFor: 'public' stamp: 'RV 11/1/2021 20:53:54'!
 size
@@ -422,6 +464,59 @@ stackEmptyErrorDescription
 	
 	^ 'Stack is empty'! !
 
+
+
+!classDefinition: #OOStackLimited category: 'Stack-Exercise'!
+OOStack subclass: #OOStackLimited
+	instanceVariableNames: 'maxSize'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStackLimited methodsFor: 'private' stamp: 'AMV 11/4/2021 10:23:30'!
+initializeWith: maxSizeOfStack
+	maxSize := maxSizeOfStack.! !
+
+
+!OOStackLimited methodsFor: 'public' stamp: 'AMV 11/4/2021 11:09:28'!
+push: dataToStackInTheTop
+	(size < maxSize ) ifFalse: [^self error: self class sendLimitReachedMessage].
+	
+	self stackNewNode: (TopNode newWith: dataToStackInTheTop).! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'OOStackLimited class' category: 'Stack-Exercise'!
+OOStackLimited class
+	instanceVariableNames: ''!
+
+!OOStackLimited class methodsFor: 'error descriptions' stamp: 'AMV 11/4/2021 11:03:27'!
+sendLimitReachedMessage
+	^'Stack limit reached'! !
+
+!OOStackLimited class methodsFor: 'error descriptions' stamp: 'AMV 11/4/2021 12:17:45'!
+sendinvalidSizeOfStackMessage
+	^'Invalid size of stack'! !
+
+
+!OOStackLimited class methodsFor: 'as yet unclassified' stamp: 'AMV 11/4/2021 12:20:30'!
+createLimitedBy: maxSizeOfStack
+	(maxSizeOfStack <= 0) ifTrue: [^self error: self sendinvalidSizeOfStackMessage].
+	
+	^OOStackLimited new initializeWith: maxSizeOfStack.! !
+
+
+!classDefinition: #OOStackUnlimited category: 'Stack-Exercise'!
+OOStack subclass: #OOStackUnlimited
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStackUnlimited methodsFor: 'public' stamp: 'AMV 11/4/2021 10:28:01'!
+push: dataToStackInTheTop
+	self stackNewNode: (TopNode newWith: dataToStackInTheTop).! !
+
 
 !classDefinition: #SentenceFinderByPrefix category: 'Stack-Exercise'!
 Object subclass: #SentenceFinderByPrefix
@@ -430,38 +525,41 @@ Object subclass: #SentenceFinderByPrefix
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!SentenceFinderByPrefix methodsFor: 'finder' stamp: 'RV 11/3/2021 22:11:28'!
-find: prefix on: aStack 
+!SentenceFinderByPrefix methodsFor: 'finder' stamp: 'AMV 11/4/2021 12:33:03'!
+find: aPrefix on: aStackWithSenteces 
 	
 	| allSentences |
-	self validatePrefix: prefix.
-	allSentences := self saveAllElementsWithoutModifying: aStack.
-	^allSentences select: [:singleSentence | singleSentence beginsWith: prefix ].! !
+	self validatePrefix: aPrefix.
+	allSentences := self saveAllElementsWithoutModifying: aStackWithSenteces.
+	^self selectSentencesFrom: allSentences withThePrefix: aPrefix.! !
 
+
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'AMV 11/4/2021 12:39:23'!
+isASpaceCharacterIn: aPrefix
+
+	^ aPrefix includesSubString: ' '! !
 
 !SentenceFinderByPrefix methodsFor: 'private' stamp: 'RV 11/3/2021 22:26:02'!
 moveElementsFrom: anStackSender to: anStackReciever
 	self moveElementsFrom: anStackSender to: anStackReciever andDo:[: elementFromStack | ].! !
 
-!SentenceFinderByPrefix methodsFor: 'private' stamp: 'RV 11/3/2021 22:28:40'!
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'AMV 11/4/2021 12:35:01'!
 moveElementsFrom: anStackSender to: anStackReciever andDo: anActionToDoDuringTheTransfer 
 	|temporalData |
 	
 	[anStackSender isEmpty ] whileFalse: [
 		temporalData := anStackSender pop.
 		
-		
-		anActionToDoDuringTheTransfer value: temporalData.
-		
+		anActionToDoDuringTheTransfer value: temporalData.		
 		
 		anStackReciever push: temporalData.
-		].! !
+	].! !
 
-!SentenceFinderByPrefix methodsFor: 'private' stamp: 'RV 11/3/2021 22:25:06'!
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'AMV 11/4/2021 12:09:37'!
 saveAllElementsWithoutModifying: aStack
 	
 	| allSentences temporalStack |
-	temporalStack := OOStack new.
+	temporalStack := OOStackUnlimited new.
 	allSentences := OrderedCollection new.
 	
 	self moveElementsFrom: aStack to: temporalStack andDo:[: elementFromStack | allSentences add: elementFromStack].
@@ -470,9 +568,14 @@ saveAllElementsWithoutModifying: aStack
 	^allSentences
 	! !
 
-!SentenceFinderByPrefix methodsFor: 'private' stamp: 'RV 11/3/2021 21:50:37'!
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'AMV 11/4/2021 12:30:36'!
+selectSentencesFrom: allSentences withThePrefix: aPrefix
+
+	^ allSentences select: [:singleSentence | singleSentence beginsWith: aPrefix ]! !
+
+!SentenceFinderByPrefix methodsFor: 'private' stamp: 'AMV 11/4/2021 12:39:23'!
 validatePrefix: aPrefix
-	((aPrefix includesSubString: ' ') or: 	aPrefix isEmpty ) ifTrue: [^self error: self class sendInvalidPrefixErrorMessage] ! !
+	((self isASpaceCharacterIn: aPrefix) or: 	aPrefix isEmpty ) ifTrue: [^self error: self class sendInvalidPrefixErrorMessage] ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
