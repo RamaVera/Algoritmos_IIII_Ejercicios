@@ -150,8 +150,26 @@ test11CanNotPushMoreThanTheLimitOfElementsOnALimitedStack
 			self assert: anError messageText = OOStackLimited sendLimitReachedMessage]
 		! !
 
-!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:23:04'!
-test12AfterPopingStackLimitBehavesTheSame
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 15:06:30'!
+test12AfterEmptyingStackLimitBehavesTheSame
+	| stack  |
+	
+	stack := OOStackLimited createLimitedBy: 2.
+	stack push: 'first'.
+	stack push: 'second'.
+	stack pop.	
+	stack pop.
+	stack push: 'first'.
+	stack push: 'second'.
+	self 
+		should: [stack push: 'third']
+		raise: Error
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = OOStackLimited sendLimitReachedMessage]
+		! !
+
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 15:06:44'!
+test13AfterPopingStackLimitBehavesTheSame
 	| stack  |
 	
 	stack := OOStackLimited createLimitedBy: 2.
@@ -166,8 +184,8 @@ test12AfterPopingStackLimitBehavesTheSame
 			self assert: anError messageText = OOStackLimited sendLimitReachedMessage]
 		! !
 
-!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:23:59'!
-test13CanNotCreateAStackLimitedByCero
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 15:06:51'!
+test14CanNotCreateAStackLimitedByCero
 	self 
 		should: [ OOStackLimited createLimitedBy: 0]
 		raise: Error
@@ -175,8 +193,8 @@ test13CanNotCreateAStackLimitedByCero
 			self assert: anError messageText = OOStackLimited sendinvalidSizeOfStackMessage ]
 		! !
 
-!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 12:24:24'!
-test14CanNotCreateStackLimitedWithANegativeNumber
+!OOStackTest methodsFor: 'test' stamp: 'AMV 11/4/2021 15:07:00'!
+test15CanNotCreateStackLimitedWithANegativeNumber
 	self 
 		should: [ OOStackLimited createLimitedBy: -1]
 		raise: Error
