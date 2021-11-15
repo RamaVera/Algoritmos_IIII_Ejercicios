@@ -358,65 +358,118 @@ test08CheckStackWontModifyItsOrderBySearch
 	! !
 
 
-!classDefinition: #OOStack category: 'Stack-Exercise'!
-Object subclass: #OOStack
-	instanceVariableNames: 'content stateOfStack'
+!classDefinition: #Nodes category: 'Stack-Exercise'!
+Object subclass: #Nodes
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'initialize' stamp: 'RV 11/4/2021 13:05:05'!
-initialize
-	content := OrderedCollection new.
-	stateOfStack := EmptyStackState new.! !
+
+!classDefinition: #BaseNode category: 'Stack-Exercise'!
+Nodes subclass: #BaseNode
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
 
+!BaseNode methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:27'!
+data
+	^ self error: OOStack stackEmptyErrorDescription! !
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 01:20:24'!
+!BaseNode methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:33'!
 isEmpty
-	^content isEmpty.! !
+	^ true! !
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 18:12:25'!
-isFull
-	self subclassResponsibility .! !
+
+!classDefinition: #TopNode category: 'Stack-Exercise'!
+Nodes subclass: #TopNode
+	instanceVariableNames: 'storedData imOverTo'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 15:41:55'!
-pop 
-	self subclassResponsibility.! !
+!TopNode methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:15'!
+data
+	^ storedData ! !
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 15:42:07'!
-push: aString 
-	self subclassResponsibility.! !
+!TopNode methodsFor: 'public' stamp: 'RV 11/1/2021 21:33:20'!
+isEmpty
+	^ false! !
 
-!OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 01:30:18'!
-size
-	^content size.! !
-
-!OOStack methodsFor: 'public' stamp: 'RV 11/4/2021 13:02:20'!
-top
-	^ stateOfStack allowsATopOn: self.! !
-
-
-!OOStack methodsFor: 'private' stamp: 'RV 11/4/2021 13:06:20'!
-popWithElements
-	^content removeLast. 
-		! !
-
-!OOStack methodsFor: 'private' stamp: 'RV 11/4/2021 12:52:20'!
-popWithNoElements
-	^self error: self class stackEmptyErrorDescription.! !
-
-!OOStack methodsFor: 'private' stamp: 'RV 11/4/2021 12:54:31'!
-topWithElements
-	^content last.! !
-
-!OOStack methodsFor: 'private' stamp: 'RV 11/4/2021 12:55:17'!
-topWithNoElements.
-	^self error: self class stackEmptyErrorDescription.
+!TopNode methodsFor: 'public' stamp: 'AMV 11/3/2021 01:28:36'!
+putOverTo: aNodeToBePuttedBelow
+	imOverTo := aNodeToBePuttedBelow.
 	! !
 
-!OOStack methodsFor: 'private' stamp: 'RV 11/4/2021 13:12:16'!
-verifyIsStackEmptyAfterPoping
-	^ self isEmpty ifTrue:[ 	stateOfStack := EmptyStackState new.	]! !
+!TopNode methodsFor: 'public' stamp: 'RV 11/1/2021 21:11:58'!
+whoIsBelowMe
+	^ imOverTo 
+		! !
+
+
+!TopNode methodsFor: 'private' stamp: 'AMV 11/3/2021 01:28:15'!
+insert: aDataToBeStoredInNode
+	storedData := aDataToBeStoredInNode! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TopNode class' category: 'Stack-Exercise'!
+TopNode class
+	instanceVariableNames: ''!
+
+!TopNode class methodsFor: 'as yet unclassified' stamp: 'RV 11/2/2021 00:03:00'!
+newWith: dataInsideTheBox
+	^self new insert: dataInsideTheBox! !
+
+
+!classDefinition: #OOStack category: 'Stack-Exercise'!
+Object subclass: #OOStack
+	instanceVariableNames: 'stackTop size'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!OOStack methodsFor: 'public' stamp: 'AMV 11/3/2021 01:24:57'!
+isEmpty
+	^stackTop isEmpty.! !
+
+!OOStack methodsFor: 'public' stamp: 'AMV 11/3/2021 01:24:10'!
+pop
+	| dataToPop|	
+	
+	dataToPop := self top.
+	self removeTopNode.
+	^dataToPop! !
+
+!OOStack methodsFor: 'public' stamp: 'AMV 11/4/2021 10:45:07'!
+push: dataToStackInTheTop
+	self subclassResponsibility ! !
+
+!OOStack methodsFor: 'public' stamp: 'RV 11/1/2021 20:53:54'!
+size
+	^size! !
+
+!OOStack methodsFor: 'public' stamp: 'AMV 11/3/2021 01:24:57'!
+top
+	^stackTop data! !
+
+
+!OOStack methodsFor: 'private' stamp: 'AMV 11/3/2021 01:24:57'!
+initialize
+	stackTop := BaseNode new.
+	size := 0.! !
+
+!OOStack methodsFor: 'private' stamp: 'AMV 11/3/2021 01:24:57'!
+removeTopNode
+	stackTop  := stackTop whoIsBelowMe.
+	size := size - 1.! !
+
+!OOStack methodsFor: 'private' stamp: 'AMV 11/3/2021 01:27:54'!
+stackNewNode: aNode
+	aNode putOverTo: stackTop.
+	stackTop := aNode.	
+	size := size +1.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -429,55 +482,25 @@ stackEmptyErrorDescription
 	
 	^ 'Stack is empty'! !
 
+
 
 !classDefinition: #OOStackLimited category: 'Stack-Exercise'!
 OOStack subclass: #OOStackLimited
-	instanceVariableNames: 'maxElementsAllowed'
+	instanceVariableNames: 'maxSize'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStackLimited methodsFor: 'public' stamp: 'RV 11/4/2021 14:36:06'!
-isFull
-	^ content size = maxElementsAllowed ! !
-
-!OOStackLimited methodsFor: 'public' stamp: 'RV 11/4/2021 18:15:17'!
-pop
-	| dataToBePopped |
-	
-	dataToBePopped := stateOfStack allowsAPopOn: self.
-	
-	stateOfStack := StackState toWhichItCorresponds: self.
-
-	^dataToBePopped! !
-
-!OOStackLimited methodsFor: 'public' stamp: 'RV 11/4/2021 18:15:36'!
-push: aDataToBePushed
-	stateOfStack allowsToPush: aDataToBePushed On: self.
-	stateOfStack := StackState toWhichItCorresponds: self.! !
-
-
-!OOStackLimited methodsFor: 'private' stamp: 'RV 11/4/2021 15:44:18'!
+!OOStackLimited methodsFor: 'private' stamp: 'AMV 11/4/2021 10:23:30'!
 initializeWith: maxSizeOfStack
-	super initialize.
-	maxElementsAllowed := maxSizeOfStack ! !
+	maxSize := maxSizeOfStack.! !
 
-!OOStackLimited methodsFor: 'private' stamp: 'RV 11/4/2021 14:33:50'!
-pushWithMaxElements: aDataToBePushed
-	^self error: self class sendLimitReachedMessage .! !
 
-!OOStackLimited methodsFor: 'private' stamp: 'RV 11/4/2021 13:55:52'!
-pushWithSpaceOnStack: aDataToBePushed
-	content add: aDataToBePushed
-	! !
-
-!OOStackLimited methodsFor: 'private' stamp: 'RV 11/4/2021 13:56:56'!
-verifyIsStackIsFullAfterPushing
-	^ self isFull ifTrue:[ 	stateOfStack := FullStackState new.	]! !
-
-!OOStackLimited methodsFor: 'private' stamp: 'RV 11/4/2021 15:47:40'!
-verifyIsStackIsWithDataAfterPopingAFullStack
-	^ self isFull ifFalse:[ 	stateOfStack := StackStateWithData new.	]! !
+!OOStackLimited methodsFor: 'public' stamp: 'AMV 11/4/2021 11:09:28'!
+push: dataToStackInTheTop
+	(size < maxSize ) ifFalse: [^self error: self class sendLimitReachedMessage].
+	
+	self stackNewNode: (TopNode newWith: dataToStackInTheTop).! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -485,24 +508,20 @@ verifyIsStackIsWithDataAfterPopingAFullStack
 OOStackLimited class
 	instanceVariableNames: ''!
 
-!OOStackLimited class methodsFor: 'error descriptions' stamp: 'RV 11/4/2021 14:21:08'!
+!OOStackLimited class methodsFor: 'error descriptions' stamp: 'AMV 11/4/2021 11:03:27'!
 sendLimitReachedMessage
-	^ 'Stack limit reached'.! !
+	^'Stack limit reached'! !
 
-!OOStackLimited class methodsFor: 'error descriptions' stamp: 'RV 11/4/2021 14:10:33'!
+!OOStackLimited class methodsFor: 'error descriptions' stamp: 'AMV 11/4/2021 12:17:45'!
 sendinvalidSizeOfStackMessage
-	^ 'Invalid size of stack'.! !
-
-!OOStackLimited class methodsFor: 'error descriptions' stamp: 'RV 11/4/2021 13:55:52'!
-stackEmptyErrorDescription
-	
-	^ 'Stack is empty'! !
+	^'Invalid size of stack'! !
 
 
-!OOStackLimited class methodsFor: 'initialize' stamp: 'RV 11/4/2021 14:10:23'!
+!OOStackLimited class methodsFor: 'as yet unclassified' stamp: 'AMV 11/4/2021 12:20:30'!
 createLimitedBy: maxSizeOfStack
-	maxSizeOfStack<= 0 ifTrue: [ ^ self error: self sendinvalidSizeOfStackMessage ].
-	^ OOStackLimited new initializeWith: maxSizeOfStack.! !
+	(maxSizeOfStack <= 0) ifTrue: [^self error: self sendinvalidSizeOfStackMessage].
+	
+	^OOStackLimited new initializeWith: maxSizeOfStack.! !
 
 
 !classDefinition: #OOStackUnlimited category: 'Stack-Exercise'!
@@ -512,33 +531,9 @@ OOStack subclass: #OOStackUnlimited
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStackUnlimited methodsFor: 'public' stamp: 'RV 11/4/2021 18:12:04'!
-isFull
-	^false! !
-
-!OOStackUnlimited methodsFor: 'public' stamp: 'RV 11/4/2021 18:14:02'!
-pop 
-	| dataToBePopped |
-	dataToBePopped := stateOfStack allowsAPopOn: self.
-	stateOfStack := StackState toWhichItCorresponds: self.
-
-	^dataToBePopped! !
-
-!OOStackUnlimited methodsFor: 'public' stamp: 'RV 11/4/2021 15:40:44'!
-push: aString 
-	content add: aString.
-	stateOfStack := StackStateWithData new! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'OOStackUnlimited class' category: 'Stack-Exercise'!
-OOStackUnlimited class
-	instanceVariableNames: ''!
-
-!OOStackUnlimited class methodsFor: 'error descriptions' stamp: 'RV 11/4/2021 15:40:45'!
-stackEmptyErrorDescription
-	
-	^ 'Stack is empty'! !
+!OOStackUnlimited methodsFor: 'public' stamp: 'AMV 11/4/2021 10:28:01'!
+push: dataToStackInTheTop
+	self stackNewNode: (TopNode newWith: dataToStackInTheTop).! !
 
 
 !classDefinition: #SentenceFinderByPrefix category: 'Stack-Exercise'!
@@ -609,178 +604,3 @@ SentenceFinderByPrefix class
 !SentenceFinderByPrefix class methodsFor: 'as yet unclassified' stamp: 'AMV 11/3/2021 01:06:00'!
 sendInvalidPrefixErrorMessage
 	^'Invalid Prefix'! !
-
-
-!classDefinition: #StackState category: 'Stack-Exercise'!
-Object subclass: #StackState
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!StackState methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:16:45'!
-allowsAPopOn: anOOstack
-	self subclassResponsibility.! !
-
-!StackState methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:16:56'!
-allowsATopOn: anOOstack
-	self subclassResponsibility.! !
-
-!StackState methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:47:50'!
-allowsToPush: aDataToBePushed On: anOOstack
-	self subclassResponsibility.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'StackState class' category: 'Stack-Exercise'!
-StackState class
-	instanceVariableNames: ''!
-
-!StackState class methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 18:13:11'!
-toWhichItCorresponds: anOOStack 
-	| allSubclassesOfAnState classToBeIntanciated |
-	allSubclassesOfAnState := self subclasses .	
-	classToBeIntanciated := allSubclassesOfAnState detect: [:eachClass |
-		eachClass correspondsTo: anOOStack
-		 ].
-	
-	^ classToBeIntanciated new
-	
-	"----------------------------------------------------------------------------------------------------------------------------------------------------
-	No borramos los comentarios por que nos gustaria recordar la historia de como fue evolucionando el codigo
-	Gracias @jburella por ayudarnos a mejorar los pasos 2 y 3
-	
-	Paso 4
-	allSubclassesOfEntero tenia el problema de que si se agregan clases hay que agregarlas manualmente. 
-	Por eso se nos ocurrio buscar si existia el mensaje que devuelve las subclases de una clase
-	Y resulto lo que nos quedo arriba
-	
-	Paso 3 
-	Se observa codigo repetido entre los 4 if. Podemos usar la clase Colection para iterar ese mensaje entre las 4 subclases.
-	
-	allSubclassesOfEntero :={EnterosNegativos. EnterosMayoresAUno. Uno. Cero.}.	
-	classToBeIntanciated := allSubclassesOfEntero detect: [:eachClass |
-		eachClass correspondsTo: aValue
-	].
-	
-	Paso 2
-	Quien sabe responder mejor la pregunta sobre la condicion de value? La subclases asociadas.
-	Por eso replanteamos las condiciones de esta manera con un mensaje polimorfico entre clases.
-	Lo interesante es que este era un mensaje de clase y no de intancia.
-	(Cero correspondsTo: aValue) ifTrue:[
-		^Cero new initializeWith: aValue].
-	(Uno correspondsTo: aValue) ifTrue:[
-		^Uno new initializeWith: aValue].
-	(EnterosNegativos correspondsTo: aValue) ifTrue:[
-		^EnterosNegativos new initializeWith: aValue].
-	(EnterosMayoresAUno correspondsTo: aValue) ifTrue:[
-		^EnterosMayoresAUno new initializeWith: aValue].
-	
-	
-	Paso 1
-	Al quitar los if de fibonacci generamos 4 clases. Cada clase ahora resolvia una parte del codigo de fibonacci.
-	El problema ahora paso a como sabia un entero de que tipo de subclase correspondia.
-	El paso 1 nos permitio saber eso. 
-	Notar que aprovechamos el uso del algoritmo de LookUp para que las subclases sepan todo lo de entero.
-	Pero manteniamos el problema de tener los if.
-	(aValue < 0) ifTrue: [^EnterosNegativos new initializeWith: aValue].
-	(aValue = 0) ifTrue: [^Cero new initializeWith: aValue].
-	(aValue = 1) ifTrue: [^Uno new initializeWith: aValue].
-	(aValue > 1) ifTrue: [^EnterosMayoresAUno new initializeWith: aValue].
-	"! !
-
-
-!classDefinition: #EmptyStackState category: 'Stack-Exercise'!
-StackState subclass: #EmptyStackState
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!EmptyStackState methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:01:24'!
-allowsAPopOn: anEmptyOOStack
-	^anEmptyOOStack popWithNoElements.
- 	! !
-
-!EmptyStackState methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:02:29'!
-allowsATopOn: anEmptyOOStack
-	^ anEmptyOOStack topWithNoElements.
- 	! !
-
-!EmptyStackState methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:52:13'!
-allowsToPush: aDataToBePushed On: anEmptyOOstack
-	anEmptyOOstack pushWithSpaceOnStack: aDataToBePushed.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'EmptyStackState class' category: 'Stack-Exercise'!
-EmptyStackState class
-	instanceVariableNames: ''!
-
-!EmptyStackState class methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 17:58:27'!
-correspondsTo: anOOStack
-	^ anOOStack isEmpty.! !
-
-
-!classDefinition: #FullStackState category: 'Stack-Exercise'!
-StackState subclass: #FullStackState
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!FullStackState methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:43:20'!
-allowsAPopOn: aFullOOStack
-	^aFullOOStack popWithElements.
- 	! !
-
-!FullStackState methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:34:11'!
-allowsATopOn: anFullOOStack
-	^ anFullOOStack topWithElements .
- 	! !
-
-!FullStackState methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:48:59'!
-allowsToPush: aDataToBePushed On: anFullOOstack
-	^ anFullOOstack pushWithMaxElements: aDataToBePushed.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'FullStackState class' category: 'Stack-Exercise'!
-FullStackState class
-	instanceVariableNames: ''!
-
-!FullStackState class methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 18:05:29'!
-correspondsTo: anOOStack
-	^ anOOStack isFull.! !
-
-
-!classDefinition: #StackStateWithData category: 'Stack-Exercise'!
-StackState subclass: #StackStateWithData
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Stack-Exercise'!
-
-!StackStateWithData methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:00:04'!
-allowsAPopOn: anOOstackWithElements
-	^anOOstackWithElements popWithElements.
- ! !
-
-!StackStateWithData methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:02:37'!
-allowsATopOn: anOOstackWithElements
-	^ anOOstackWithElements topWithElements.
- ! !
-
-!StackStateWithData methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 13:52:07'!
-allowsToPush: aDataToBePushed On: anOOstackWithElements
-	anOOstackWithElements pushWithSpaceOnStack: aDataToBePushed! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'StackStateWithData class' category: 'Stack-Exercise'!
-StackStateWithData class
-	instanceVariableNames: ''!
-
-!StackStateWithData class methodsFor: 'as yet unclassified' stamp: 'RV 11/4/2021 17:59:01'!
-correspondsTo: anOOStack
-	^ anOOStack isEmpty not.! !
