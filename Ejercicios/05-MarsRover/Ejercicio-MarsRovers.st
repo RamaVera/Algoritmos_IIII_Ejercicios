@@ -1,4 +1,204 @@
-!classDefinition: #DireccionesDelMarsRover category: #'Ejercicio-MarsRovers'!
+!classDefinition: #TestMarsRover category: 'Ejercicio-MarsRovers'!
+TestCase subclass: #TestMarsRover
+	instanceVariableNames: 'marsRoversEnElOrigenApuntandoAlNorte marsRoversEnElOrigenApuntandoAlSur marsRoversEnElOrigenApuntandoAlOeste marsRoversEnElOrigenApuntandoAlEste'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Ejercicio-MarsRovers'!
+
+!TestMarsRover methodsFor: 'set up' stamp: 'AMV 11/16/2021 20:16:08'!
+setUp
+	marsRoversEnElOrigenApuntandoAlNorte := MarsRover comenzarEnLaPosicionX: 0 yEnLaPosicionY: 0 apuntadoAUnaDireccionCardinal: Norte new.
+	marsRoversEnElOrigenApuntandoAlSur := MarsRover comenzarEnLaPosicionX: 0 yEnLaPosicionY: 0 apuntadoAUnaDireccionCardinal: Sur new.
+	marsRoversEnElOrigenApuntandoAlOeste := MarsRover comenzarEnLaPosicionX: 0 yEnLaPosicionY: 0 apuntadoAUnaDireccionCardinal: Oeste new.
+	marsRoversEnElOrigenApuntandoAlEste := MarsRover comenzarEnLaPosicionX: 0 yEnLaPosicionY: 0 apuntadoAUnaDireccionCardinal: Este new.! !
+
+
+!TestMarsRover methodsFor: 'test - inicializacion' stamp: 'RV 11/15/2021 00:44:43'!
+test01ElMarsRoversComienzaEnUnaPosicionDefinida
+	
+	self assert: (marsRoversEnElOrigenApuntandoAlNorte estaEnLaPosicionX:0 Y:0).! !
+
+!TestMarsRover methodsFor: 'test - inicializacion' stamp: 'RV 11/15/2021 00:38:15'!
+test02ElMarsRoversNoComienzaEnUnaPosicionDiferenteALaDefinida
+
+	self deny: (marsRoversEnElOrigenApuntandoAlNorte estaEnLaPosicionX: 2 Y: 6).
+	! !
+
+!TestMarsRover methodsFor: 'test - inicializacion' stamp: 'AMV 11/16/2021 20:09:07'!
+test03ElMarsRoversComienzaApuntandoALaDireccionDefinida
+
+	self assert: (marsRoversEnElOrigenApuntandoAlNorte estaApuntandoALaDireccionCardinal: Norte).	! !
+
+!TestMarsRover methodsFor: 'test - inicializacion' stamp: 'AMV 11/16/2021 20:08:24'!
+test04ElMarsRoversNoComienzaApuntandoAUnaDireccionNoDefinida
+	
+	self deny: (marsRoversEnElOrigenApuntandoAlNorte estaApuntandoALaDireccionCardinal: Sur).
+	self deny: (marsRoversEnElOrigenApuntandoAlNorte estaApuntandoALaDireccionCardinal: Este).
+	self deny: (marsRoversEnElOrigenApuntandoAlNorte estaApuntandoALaDireccionCardinal: Oeste).
+	! !
+
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:51:18'!
+test05CuandoEstaApuntandoAlNorteYSeMandaUnComandoDeAvanceAvanzaUnPasoEnDireccionY
+	
+	self verificarQue: marsRoversEnElOrigenApuntandoAlNorte alRecibirElComando: 'f'  termineEnLaPosicionX: 0 Y: 1.! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:51:29'!
+test06CuandoEstaApuntandoAlNorteYSeMandaUnComandoDeRetrocesoRetrocedeUnPasoEnDireccionY
+
+	self verificarQue: marsRoversEnElOrigenApuntandoAlNorte alRecibirElComando: 'b'  termineEnLaPosicionX: 0 Y: -1.! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:51:39'!
+test07CuandoEstaApuntandoAlSurYSeMandaUnComandoDeAvanceRetrocedeUnPasoEnDireccionY
+
+	self verificarQue: marsRoversEnElOrigenApuntandoAlSur alRecibirElComando: 'f'  termineEnLaPosicionX: 0 Y: -1.! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:51:48'!
+test08CuandoEstaApuntandoAlSurYSeMandaUnComandoDeRetrocesoAvanzaUnPasoEnDireccionY
+
+	self verificarQue: marsRoversEnElOrigenApuntandoAlSur alRecibirElComando: 'b'  termineEnLaPosicionX: 0 Y: 1.! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:51:55'!
+test09CuandoEstaApuntandoAlOesteYSeMandaUnComandoDeAvanceRetrocedeUnPasoEnDireccionX
+
+	self verificarQue: marsRoversEnElOrigenApuntandoAlOeste alRecibirElComando: 'f'  termineEnLaPosicionX: -1 Y: 0.! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:52:03'!
+test10CuandoEstaApuntandoAlOesteYSeMandaUnComandoDeRetrocesoAvanzaUnPasoEnDireccionX
+
+	self verificarQue: marsRoversEnElOrigenApuntandoAlOeste alRecibirElComando: 'b'  termineEnLaPosicionX: 1 Y: 0.! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:52:18'!
+test11CuandoEstaApuntandoAlEsteYSeMandaUnComandoDeAvanceAvanzaUnPasoEnDireccionX
+
+	self verificarQue: marsRoversEnElOrigenApuntandoAlEste alRecibirElComando: 'f'  termineEnLaPosicionX: 1 Y: 0.! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:52:43'!
+test12CuandoEstaApuntandoAlEsteYSeMandaUnComandoDeRetrocesoRetrocedeUnPasoEnDireccionX
+
+	self verificarQue: marsRoversEnElOrigenApuntandoAlEste alRecibirElComando: 'b'  termineEnLaPosicionX: -1 Y: 0.! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:41:59'!
+test13CuandoEstaApuntandoAlNorteYSeMandaUnComandoDeRotacionIzquierdaTerminaApuntandoAlOeste
+
+	| unMarsRover |
+	
+	unMarsRover := marsRoversEnElOrigenApuntandoAlNorte recibirComando: 'l'.
+	
+	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Oeste).! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:42:31'!
+test14CuandoEstaApuntandoAlNorteYSeMandaUnComandoDeRotacionDerechaTerminaApuntandoAlEste
+
+	| unMarsRover |
+	
+	unMarsRover := marsRoversEnElOrigenApuntandoAlNorte recibirComando: 'r'.
+	
+	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Este).! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:43:02'!
+test15CuandoEstaApuntandoAlSurYSeMandaUnComandoDeRotacionoIzquierdaTerminaApuntandoAlEste
+
+	| unMarsRover |
+	
+	unMarsRover := marsRoversEnElOrigenApuntandoAlSur recibirComando: 'l'.
+	
+	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Este).! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:43:35'!
+test16CuandoEstaApuntandoAlSurYSeMandaUnComandoDeRotacionoDerechaTerminaApuntandoAlOeste
+
+	| unMarsRover |
+	
+	unMarsRover := marsRoversEnElOrigenApuntandoAlSur recibirComando: 'r'.
+	
+	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Oeste).! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:44:18'!
+test17CuandoEstaApuntandoAlOesteYSeMandaUnComandoDeRotacionoIzquierdaTerminaApuntandoAlSur
+
+	| unMarsRover |
+	
+	unMarsRover := marsRoversEnElOrigenApuntandoAlOeste recibirComando: 'l'.
+	
+	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Sur).! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:45:05'!
+test18CuandoEstaApuntandoAlOesteYSeMandaUnComandoDeRotacionoDerechaTerminaApuntandoAlNorte
+
+	| unMarsRover |
+	
+	unMarsRover := marsRoversEnElOrigenApuntandoAlOeste recibirComando: 'r'.
+	
+	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Norte).! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:45:28'!
+test19CuandoEstaApuntandoAlEsteYSeMandaUnComandoDeRotacionoIzquierdaTerminaApuntandoAlNorte
+
+	| unMarsRover |
+	
+	unMarsRover := marsRoversEnElOrigenApuntandoAlEste recibirComando: 'l'.
+	
+	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Norte).! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:45:48'!
+test20CuandoEstaApuntandoAlEsteYSeMandaUnComandoDeRotacionoDerechaTerminaApuntandoAlSur
+
+	| unMarsRover |
+	
+	unMarsRover := marsRoversEnElOrigenApuntandoAlEste recibirComando: 'r'.
+	
+	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Sur).! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:54:58'!
+test21CuandoSeMandaUnComandoErroneoApuntadoAlNorteSeEnviaUnMensajeDeError
+
+	self should: [marsRoversEnElOrigenApuntandoAlNorte recibirComando: 't']  
+		raise: Error 
+			withExceptionDo: [:anErrorMessage | anErrorMessage = 'Comando invalido' ].
+! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:55:12'!
+test22CuandoSeMandaUnComandoErroneoApuntadoAlSurSeEnviaUnMensajeDeError
+
+	self should: [marsRoversEnElOrigenApuntandoAlSur recibirComando: 't']  
+		raise: Error 
+			withExceptionDo: [:anErrorMessage | anErrorMessage = 'Comando invalido' ].
+! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:55:25'!
+test23CuandoSeMandaUnComandoErroneoApuntadoAlOesteSeEnviaUnMensajeDeError
+
+	self should: [marsRoversEnElOrigenApuntandoAlOeste recibirComando: 't']  
+		raise: Error 
+			withExceptionDo: [:anErrorMessage | anErrorMessage = 'Comando invalido' ].
+! !
+
+!TestMarsRover methodsFor: 'test - un comando' stamp: 'RV 11/16/2021 22:55:41'!
+test24CuandoSeMandaUnComandoErroneoApuntadoAlEsteSeEnviaUnMensajeDeError
+
+	self should: [marsRoversEnElOrigenApuntandoAlEste recibirComando: 't']  
+		raise: Error 
+			withExceptionDo: [:anErrorMessage | anErrorMessage = 'Comando invalido' ].
+! !
+
+
+!TestMarsRover methodsFor: 'test - mas de un comando' stamp: 'RV 11/16/2021 23:18:45'!
+test25
+
+	self verificarQue: marsRoversEnElOrigenApuntandoAlNorte alRecibirElComando: 'fffbbb'  termineEnLaPosicionX: 0 Y: 0.! !
+
+
+!TestMarsRover methodsFor: 'support' stamp: 'AMV 11/16/2021 20:11:15'!
+verificarQue: unMarsRover alRecibirElComando: unComando termineEnLaPosicionX: posicionX Y: posicionY
+
+	| unMarsRoverCorrido |
+	unMarsRoverCorrido := unMarsRover recibirComando: unComando.
+	
+	self assert: (unMarsRoverCorrido estaEnLaPosicionX: posicionX Y: posicionY).! !
+
+
+!classDefinition: #DireccionesDelMarsRover category: 'Ejercicio-MarsRovers'!
 Object subclass: #DireccionesDelMarsRover
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -9,24 +209,8 @@ Object subclass: #DireccionesDelMarsRover
 apuntadaPor: unMarsRover procesarComandos: unaListaDeComandos 
 	self subclassResponsibility ! !
 
-!DireccionesDelMarsRover methodsFor: 'as yet unclassified' stamp: 'RV 11/15/2021 00:14:42'!
-esEste
-	^false! !
-
-!DireccionesDelMarsRover methodsFor: 'as yet unclassified' stamp: 'RV 11/15/2021 00:14:29'!
-esNorte
-	^false! !
-
-!DireccionesDelMarsRover methodsFor: 'as yet unclassified' stamp: 'RV 11/15/2021 00:14:38'!
-esOeste
-	^false! !
-
-!DireccionesDelMarsRover methodsFor: 'as yet unclassified' stamp: 'RV 11/15/2021 00:14:34'!
-esSur
-	^false! !
-
 
-!classDefinition: #Este category: #'Ejercicio-MarsRovers'!
+!classDefinition: #Este category: 'Ejercicio-MarsRovers'!
 DireccionesDelMarsRover subclass: #Este
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -37,12 +221,8 @@ DireccionesDelMarsRover subclass: #Este
 apuntadaPor: unMarsRover procesarComandos: unaListaDeComandos 
 	unMarsRover desdeElEsteProcesar: unaListaDeComandos! !
 
-!Este methodsFor: 'as yet unclassified' stamp: 'RV 11/15/2021 00:15:07'!
-esEste
-	^ true! !
-
 
-!classDefinition: #Norte category: #'Ejercicio-MarsRovers'!
+!classDefinition: #Norte category: 'Ejercicio-MarsRovers'!
 DireccionesDelMarsRover subclass: #Norte
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -53,12 +233,8 @@ DireccionesDelMarsRover subclass: #Norte
 apuntadaPor: unMarsRover procesarComandos: unaListaDeComandos 
 	unMarsRover desdeElNorteProcesar: unaListaDeComandos! !
 
-!Norte methodsFor: 'as yet unclassified' stamp: 'AMV 11/14/2021 19:40:12'!
-esNorte
-	^true! !
-
 
-!classDefinition: #Oeste category: #'Ejercicio-MarsRovers'!
+!classDefinition: #Oeste category: 'Ejercicio-MarsRovers'!
 DireccionesDelMarsRover subclass: #Oeste
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -69,12 +245,8 @@ DireccionesDelMarsRover subclass: #Oeste
 apuntadaPor: unMarsRover procesarComandos: unaListaDeComandos 
 	unMarsRover desdeElOesteProcesar: unaListaDeComandos ! !
 
-!Oeste methodsFor: 'as yet unclassified' stamp: 'RV 11/15/2021 00:15:38'!
-esOeste
-	^true! !
-
 
-!classDefinition: #Sur category: #'Ejercicio-MarsRovers'!
+!classDefinition: #Sur category: 'Ejercicio-MarsRovers'!
 DireccionesDelMarsRover subclass: #Sur
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -85,12 +257,8 @@ DireccionesDelMarsRover subclass: #Sur
 apuntadaPor: unMarsRover procesarComandos: unaListaDeComandos 
 	unMarsRover desdeElSurProcesar: unaListaDeComandos ! !
 
-!Sur methodsFor: 'as yet unclassified' stamp: 'RV 11/15/2021 00:15:54'!
-esSur
-	^true! !
-
 
-!classDefinition: #MarsRover category: #'Ejercicio-MarsRovers'!
+!classDefinition: #MarsRover category: 'Ejercicio-MarsRovers'!
 Object subclass: #MarsRover
 	instanceVariableNames: 'posicionXY direccionCardinal'
 	classVariableNames: ''
@@ -136,24 +304,29 @@ desdeElEsteProcesar: unaListaDeComandos
 	(unaListaDeComandos ~= 'f' and: unaListaDeComandos ~= 'b' and: unaListaDeComandos ~= 'r' and: unaListaDeComandos ~= 'l') ifTrue: [self error: 'Comando invalido']
 ! !
 
-!MarsRover methodsFor: 'private' stamp: 'AMV 11/16/2021 20:51:54'!
-desdeElNorteProcesar: unaListaDeComandos 
-	unaListaDeComandos = 'f' ifTrue:[
+!MarsRover methodsFor: 'private' stamp: 'RV 11/16/2021 23:38:40'!
+desdeElNorteProcesar: unaListaDeComandos
+	
+	
+	| unaListaDeComandosReducida |
+	unaListaDeComandos isEmpty ifTrue: [^self].
+	
+	(unaListaDeComandos first) = $f ifTrue:[
 		posicionXY := posicionXY + (0@1)
 		].
-	unaListaDeComandos = 'b' ifTrue:[
+	(unaListaDeComandos first) = $b ifTrue:[
 		posicionXY :=  posicionXY + (0@-1).
 		].
-	unaListaDeComandos = 'l' ifTrue: [
+	(unaListaDeComandos first) = $l ifTrue: [
 		direccionCardinal := Oeste new
 		].
-	unaListaDeComandos = 'r' ifTrue: [
+	(unaListaDeComandos first) = $r  ifTrue: [
 		direccionCardinal := Este new
-		]
-	ifFalse: [
-		self error: 'Comando Invalido'.
 		].
-	(unaListaDeComandos ~= 'f' and: unaListaDeComandos ~= 'b' and: unaListaDeComandos ~= 'r' and: unaListaDeComandos ~= 'l') ifTrue: [self error: 'Comando invalido']
+	(unaListaDeComandos first ~= $f and: unaListaDeComandos first ~= $b and: unaListaDeComandos first ~= $r and: unaListaDeComandos first ~= $l) ifTrue: [self error: 'Comando in valido'].
+	
+	unaListaDeComandosReducida := unaListaDeComandos copyFrom: 2 to: (unaListaDeComandos size).
+	self desdeElNorteProcesar: unaListaDeComandosReducida. 
 ! !
 
 !MarsRover methodsFor: 'private' stamp: 'AMV 11/16/2021 20:52:08'!
@@ -190,178 +363,10 @@ desdeElSurProcesar: unaListaDeComandos
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'MarsRover class' category: #'Ejercicio-MarsRovers'!
+!classDefinition: 'MarsRover class' category: 'Ejercicio-MarsRovers'!
 MarsRover class
 	instanceVariableNames: ''!
 
 !MarsRover class methodsFor: 'as yet unclassified' stamp: 'RV 11/14/2021 16:35:46'!
 comenzarEnLaPosicionX: posicionXinicial yEnLaPosicionY: posicionYinicial apuntadoAUnaDireccionCardinal: direccionCardinalInicial     
 	^self new comenzarEnX: posicionXinicial yEnY: posicionYinicial apuntandoALaDireccionCardinal: direccionCardinalInicial.! !
-
-
-!classDefinition: #TestMarsRover category: #'Ejercicio-MarsRovers'!
-TestCase subclass: #TestMarsRover
-	instanceVariableNames: 'marsRoversEnElOrigenApuntandoAlNorte marsRoversEnElOrigenApuntandoAlSur marsRoversEnElOrigenApuntandoAlOeste marsRoversEnElOrigenApuntandoAlEste'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Ejercicio-MarsRovers'!
-
-!TestMarsRover methodsFor: 'set up' stamp: 'AMV 11/16/2021 20:16:08'!
-setUp
-	marsRoversEnElOrigenApuntandoAlNorte := MarsRover comenzarEnLaPosicionX: 0 yEnLaPosicionY: 0 apuntadoAUnaDireccionCardinal: Norte new.
-	marsRoversEnElOrigenApuntandoAlSur := MarsRover comenzarEnLaPosicionX: 0 yEnLaPosicionY: 0 apuntadoAUnaDireccionCardinal: Sur new.
-	marsRoversEnElOrigenApuntandoAlOeste := MarsRover comenzarEnLaPosicionX: 0 yEnLaPosicionY: 0 apuntadoAUnaDireccionCardinal: Oeste new.
-	marsRoversEnElOrigenApuntandoAlEste := MarsRover comenzarEnLaPosicionX: 0 yEnLaPosicionY: 0 apuntadoAUnaDireccionCardinal: Este new.! !
-
-
-!TestMarsRover methodsFor: 'test - inicializacion' stamp: 'RV 11/15/2021 00:44:43'!
-test01ElMarsRoversComienzaEnUnaPosicionDefinida
-	
-	self assert: (marsRoversEnElOrigenApuntandoAlNorte estaEnLaPosicionX:0 Y:0).! !
-
-!TestMarsRover methodsFor: 'test - inicializacion' stamp: 'RV 11/15/2021 00:38:15'!
-test02ElMarsRoversNoComienzaEnUnaPosicionDiferenteALaDefinida
-
-	self deny: (marsRoversEnElOrigenApuntandoAlNorte estaEnLaPosicionX: 2 Y: 6).
-	! !
-
-!TestMarsRover methodsFor: 'test - inicializacion' stamp: 'AMV 11/16/2021 20:09:07'!
-test03ElMarsRoversComienzaApuntandoALaDireccionDefinida
-
-	self assert: (marsRoversEnElOrigenApuntandoAlNorte estaApuntandoALaDireccionCardinal: Norte).	! !
-
-!TestMarsRover methodsFor: 'test - inicializacion' stamp: 'AMV 11/16/2021 20:08:24'!
-test04ElMarsRoversNoComienzaApuntandoAUnaDireccionNoDefinida
-	
-	self deny: (marsRoversEnElOrigenApuntandoAlNorte estaApuntandoALaDireccionCardinal: Sur).
-	self deny: (marsRoversEnElOrigenApuntandoAlNorte estaApuntandoALaDireccionCardinal: Este).
-	self deny: (marsRoversEnElOrigenApuntandoAlNorte estaApuntandoALaDireccionCardinal: Oeste).
-	! !
-
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 19:45:48'!
-test05CuandoEstaApuntandoAlNorteYSeMandaUnComandoFAvanzaUnPasoEnDireccionY
-	
-	self verificarQue: marsRoversEnElOrigenApuntandoAlNorte alRecibirElComando: 'f'  termineEnLaPosicionX: 0 Y: 1.! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 19:46:21'!
-test06CuandoEstaApuntandoAlNorteYSeMandaUnComandoBRetrocedeUnPasoEnDireccionY
-
-	self verificarQue: marsRoversEnElOrigenApuntandoAlNorte alRecibirElComando: 'b'  termineEnLaPosicionX: 0 Y: -1.! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 19:46:54'!
-test07CuandoEstaApuntandoAlSurYSeMandaUnComandoFRetrocedeUnPasoEnDireccionY
-
-	self verificarQue: marsRoversEnElOrigenApuntandoAlSur alRecibirElComando: 'f'  termineEnLaPosicionX: 0 Y: -1.! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 19:47:25'!
-test08CuandoEstaApuntandoAlSurYSeMandaUnComandoBAvanzaUnPasoEnDireccionY
-
-	self verificarQue: marsRoversEnElOrigenApuntandoAlSur alRecibirElComando: 'b'  termineEnLaPosicionX: 0 Y: 1.! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 19:48:35'!
-test09CuandoEstaApuntandoAlOesteYSeMandaUnComandoFRetrocedeUnPasoEnDireccionX
-
-	self verificarQue: marsRoversEnElOrigenApuntandoAlOeste alRecibirElComando: 'f'  termineEnLaPosicionX: -1 Y: 0.! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 19:48:51'!
-test10CuandoEstaApuntandoAlOesteYSeMandaUnComandoBAvanzaUnPasoEnDireccionX
-
-	self verificarQue: marsRoversEnElOrigenApuntandoAlOeste alRecibirElComando: 'b'  termineEnLaPosicionX: 1 Y: 0.! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 19:49:34'!
-test11CuandoEstaApuntandoAlEsteYSeMandaUnComandoFAvanzaUnPasoEnDireccionX
-
-	self verificarQue: marsRoversEnElOrigenApuntandoAlEste alRecibirElComando: 'f'  termineEnLaPosicionX: 1 Y: 0.! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 19:50:11'!
-test12CuandoEstaApuntandoAlEsteYSeMandaUnComandoBRetrocedeUnPasoEnDireccionX
-
-	self verificarQue: marsRoversEnElOrigenApuntandoAlEste alRecibirElComando: 'b'  termineEnLaPosicionX: -1 Y: 0.! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 20:14:24'!
-test13
-
-	| unMarsRover |
-	
-	unMarsRover := marsRoversEnElOrigenApuntandoAlNorte recibirComando: 'l'.
-	
-	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Oeste).! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 20:20:44'!
-test14
-
-	| unMarsRover |
-	
-	unMarsRover := marsRoversEnElOrigenApuntandoAlNorte recibirComando: 'r'.
-	
-	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Este).! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 20:25:14'!
-test15
-
-	| unMarsRover |
-	
-	unMarsRover := marsRoversEnElOrigenApuntandoAlSur recibirComando: 'l'.
-	
-	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Este).! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 20:36:53'!
-test16
-
-	| unMarsRover |
-	
-	unMarsRover := marsRoversEnElOrigenApuntandoAlSur recibirComando: 'r'.
-	
-	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Oeste).! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 20:36:13'!
-test17
-
-	| unMarsRover |
-	
-	unMarsRover := marsRoversEnElOrigenApuntandoAlOeste recibirComando: 'l'.
-	
-	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Sur).! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 20:37:08'!
-test18
-
-	| unMarsRover |
-	
-	unMarsRover := marsRoversEnElOrigenApuntandoAlOeste recibirComando: 'r'.
-	
-	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Norte).! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 20:38:04'!
-test19
-
-	| unMarsRover |
-	
-	unMarsRover := marsRoversEnElOrigenApuntandoAlEste recibirComando: 'l'.
-	
-	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Norte).! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 20:39:03'!
-test20
-
-	| unMarsRover |
-	
-	unMarsRover := marsRoversEnElOrigenApuntandoAlEste recibirComando: 'r'.
-	
-	self assert: (unMarsRover estaApuntandoALaDireccionCardinal: Sur).! !
-
-!TestMarsRover methodsFor: 'test - un comando' stamp: 'AMV 11/16/2021 20:43:51'!
-test21
-
-	self should: [marsRoversEnElOrigenApuntandoAlNorte recibirComando: 't']  raise: Error withExceptionDo: [:anErrorMessage | anErrorMessage = 'Comando invalido' ].
-! !
-
-
-!TestMarsRover methodsFor: 'support' stamp: 'AMV 11/16/2021 20:11:15'!
-verificarQue: unMarsRover alRecibirElComando: unComando termineEnLaPosicionX: posicionX Y: posicionY
-
-	| unMarsRoverCorrido |
-	unMarsRoverCorrido := unMarsRover recibirComando: unComando.
-	
-	self assert: (unMarsRoverCorrido estaEnLaPosicionX: posicionX Y: posicionY).! !
