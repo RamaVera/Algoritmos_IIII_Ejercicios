@@ -131,10 +131,19 @@ initializeFor: aValue
 	value := aValue ! !
 
 
-!Deposit methodsFor: 'value' stamp: 'HernanWilkinson 7/13/2011 18:38'!
+!Deposit methodsFor: 'value' stamp: 'RV 11/18/2021 21:33:38'!
 value
 
 	^ value! !
+
+
+!Deposit methodsFor: 'as yet unclassified' stamp: 'RV 11/18/2021 21:43:46'!
+isDeposit
+	^true! !
+
+!Deposit methodsFor: 'as yet unclassified' stamp: 'RV 11/18/2021 21:43:57'!
+isWithdraw
+	^false! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -155,16 +164,25 @@ AccountTransaction subclass: #Withdraw
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Withdraw methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:46'!
+!Withdraw methodsFor: 'initialization' stamp: 'RV 11/18/2021 21:33:26'!
 initializeFor: aValue
 
 	value := aValue ! !
 
 
-!Withdraw methodsFor: 'value' stamp: 'HernanWilkinson 7/13/2011 18:33'!
+!Withdraw methodsFor: 'value' stamp: 'RV 11/18/2021 21:33:46'!
 value
 
 	^ value! !
+
+
+!Withdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/18/2021 21:44:13'!
+isDeposit
+	^false! !
+
+!Withdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/18/2021 21:44:27'!
+isWithdraw
+	^true! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -191,10 +209,18 @@ initialize
 	transactions := OrderedCollection new.! !
 
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'HAW 5/23/2019 15:19:32'!
+!ReceptiveAccount methodsFor: 'main protocol' stamp: 'RV 11/18/2021 22:17:09'!
 balance
 
-	^transactions sum: [ :aTransaction | aTransaction value ] ifEmpty: [ 0 ]! !
+	^transactions sum: [ :aTransaction | 
+		aTransaction isDeposit 
+		ifTrue:[
+			aTransaction value.
+		]
+		ifFalse:[
+			aTransaction value * -1.
+		]
+		] ifEmpty: [ 0 ]! !
 
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'NR 10/17/2019 03:28:43'!
 hasRegistered: aTransaction
