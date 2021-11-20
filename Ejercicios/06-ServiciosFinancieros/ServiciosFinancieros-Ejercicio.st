@@ -145,6 +145,10 @@ isDeposit
 isWithdraw
 	^false! !
 
+!Deposit methodsFor: 'as yet unclassified' stamp: 'RV 11/20/2021 20:38:31'!
+netValue
+	^self value! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Deposit class' category: 'ServiciosFinancieros-Ejercicio'!
@@ -184,6 +188,10 @@ isDeposit
 isWithdraw
 	^true! !
 
+!Withdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/20/2021 20:38:12'!
+netValue
+	^ self value negated! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Withdraw class' category: 'ServiciosFinancieros-Ejercicio'!
@@ -209,18 +217,10 @@ initialize
 	transactions := OrderedCollection new.! !
 
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'RV 11/18/2021 22:17:09'!
+!ReceptiveAccount methodsFor: 'main protocol' stamp: 'RV 11/20/2021 20:37:16'!
 balance
 
-	^transactions sum: [ :aTransaction | 
-		aTransaction isDeposit 
-		ifTrue:[
-			aTransaction value.
-		]
-		ifFalse:[
-			aTransaction value * -1.
-		]
-		] ifEmpty: [ 0 ]! !
+	^transactions sum: [ :aTransaction | 	aTransaction netValue. ] ifEmpty: [ 0 ]! !
 
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'NR 10/17/2019 03:28:43'!
 hasRegistered: aTransaction
