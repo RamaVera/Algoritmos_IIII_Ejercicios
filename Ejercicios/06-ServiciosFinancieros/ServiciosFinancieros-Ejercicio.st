@@ -1,3 +1,95 @@
+!classDefinition: #PortfolioTest category: 'ServiciosFinancieros-Ejercicio'!
+TestCase subclass: #PortfolioTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:36:53'!
+test01AnEmptyPortfolioHasZeroBalance
+
+	| aPortfolioToTest |
+	aPortfolioToTest := 	Portfolio new.
+	
+	
+	self assert: 0 equals: aPortfolioToTest balance ! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:37:07'!
+test02aPortfolioWithOneAccountHasTheSameBalanceOfTheAccount
+
+	| aPortfolioToTest anAccount |
+	aPortfolioToTest := 	Portfolio new.
+	
+	anAccount := ReceptiveAccount new.
+	CashierDeposit register: 100* peso  on: anAccount. 
+	
+	aPortfolioToTest add: anAccount.
+	
+	self assert: 100* peso equals: aPortfolioToTest balance ! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:43:59'!
+test03aPortfolioWithManyAccountHasTheSameBalanceOfTheTotalOfAccounts
+
+	| aPortfolioToTest anotherAccount oneAccount |
+	aPortfolioToTest := 	Portfolio new.
+	
+	oneAccount := ReceptiveAccount new.
+	CashierDeposit register: 100* peso  on: oneAccount. 
+	anotherAccount := ReceptiveAccount new.
+	CashierWithdraw register: 75* peso  on: anotherAccount. 	
+	
+	aPortfolioToTest add: oneAccount.
+	aPortfolioToTest add: anotherAccount.
+	
+	self assert: 25* peso equals: aPortfolioToTest balance ! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:52:07'!
+test04aPortfolioCanHaveAnotherPortfolioInsideInAdditionToReceptiveAccountsAndObtainAllTheirBalance
+
+	| aPortfolioToTest anotherAccount oneAccount otherAccount anotherPortfolio |
+	aPortfolioToTest := 	Portfolio new.
+	anotherPortfolio := 	Portfolio new.
+	
+	oneAccount := ReceptiveAccount new.
+	otherAccount := ReceptiveAccount new.
+	anotherAccount := ReceptiveAccount new.
+	
+	CashierDeposit register: 100* peso  on: oneAccount. 
+	Transfer from: otherAccount to: anotherAccount for: 300* peso.
+	CashierWithdraw register: 100* peso  on: anotherAccount. 
+	
+	
+	aPortfolioToTest add: oneAccount.
+	aPortfolioToTest add: otherAccount.
+	
+	anotherPortfolio add: anotherAccount.
+	
+	aPortfolioToTest add: anotherPortfolio.
+	
+	self assert: 0* peso equals: aPortfolioToTest balance ! !
+
+!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 21:39:08'!
+test05PortolioKnowsRegisteredTransactionsOnSavedAccounts 
+
+	| aPortfolioToTest oneAccount otherAccount deposit withdraw |
+	
+	aPortfolioToTest := 	Portfolio new.
+	
+	oneAccount := ReceptiveAccount new.
+	otherAccount := ReceptiveAccount new.
+	
+	deposit := CashierDeposit register: 100 * peso on: oneAccount.
+	withdraw := CashierWithdraw register: 50 * peso on: otherAccount.
+
+	aPortfolioToTest add: oneAccount.
+	aPortfolioToTest add: otherAccount.
+
+	self assert: (aPortfolioToTest has: deposit onA: oneAccount).
+	self assert: (aPortfolioToTest has: withdraw onA:  otherAccount).
+	
+! !
+
+
 !classDefinition: #ReceptiveAccountTest category: 'ServiciosFinancieros-Ejercicio'!
 TestCase subclass: #ReceptiveAccountTest
 	instanceVariableNames: ''
@@ -15,30 +107,30 @@ test01ReceptiveAccountHaveZeroAsBalanceWhenCreated
 	self assert: 0 equals: account balance
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 7/1/2021 03:14:20'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:34:55'!
 test02DepositIncreasesBalanceOnTransactionValue 
 
 	| account |
 	
 	account := ReceptiveAccount  new.
-	Deposit register: 100 * peso on: account.
+	CashierDeposit register: 100 * peso on: account.
 		
 	self assert: 100 * peso equals: account balance
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 7/1/2021 03:14:24'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:35:08'!
 test03WithdrawDecreasesBalanceOnTransactionValue 
 
 	| account |
 	
 	account := ReceptiveAccount new.
-	Deposit register: 100 * peso on: account.
-	Withdraw register: 50 * peso on: account.
+	CashierDeposit register: 100 * peso on: account.
+	CashierWithdraw register: 50 * peso on: account.
 		
 	self assert: 50 * peso equals: account balance
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 7/1/2021 03:10:14'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:35:08'!
 test04WithdrawValueMustBePositive 
 
 	| account withdrawValue |
@@ -46,43 +138,43 @@ test04WithdrawValueMustBePositive
 	account := ReceptiveAccount new.
 	withdrawValue := 50 * peso.
 	
-	self assert: withdrawValue equals: (Withdraw register: withdrawValue on: account) value
+	self assert: withdrawValue equals: (CashierWithdraw register: withdrawValue on: account) value
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 7/1/2021 03:10:22'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:35:08'!
 test05ReceptiveAccountKnowsRegisteredTransactions 
 
 	| account deposit withdraw |
 	
 	account := ReceptiveAccount new.
-	deposit := Deposit register: 100 * peso on: account.
-	withdraw := Withdraw register: 50 * peso on: account.
+	deposit := CashierDeposit register: 100 * peso on: account.
+	withdraw := CashierWithdraw register: 50 * peso on: account.
 		
 	self assert: (account hasRegistered: deposit).
 	self assert: (account hasRegistered: withdraw).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'AMV 11/24/2021 22:59:22'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:35:08'!
 test06ReceptiveAccountDoNotKnowNotRegisteredTransactions
 
 	| account deposit withdraw |
 	
 	account := ReceptiveAccount new.
-	deposit :=  Deposit for: 100 * peso .
-	withdraw := Withdraw for: 50 * peso .
+	deposit :=  CashierDeposit for: 100 * peso .
+	withdraw := CashierWithdraw for: 50 * peso .
 		
 	self deny: (account hasRegistered: deposit).
 	self deny: (account hasRegistered: withdraw).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 7/1/2021 03:12:23'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:34:55'!
 test07AccountKnowsItsTransactions 
 
 	| account deposit |
 	
 	account := ReceptiveAccount new.
 	
-	deposit := Deposit register: 50 * peso on: account.
+	deposit := CashierDeposit register: 50 * peso on: account.
 		
 	self assert: 1 equals: account transactions size.
 	self assert: (account transactions includes: deposit).
@@ -174,34 +266,67 @@ register: aValue on: account
 	^ transaction! !
 
 
-!classDefinition: #Deposit category: 'ServiciosFinancieros-Ejercicio'!
-AccountTransaction subclass: #Deposit
+!classDefinition: #CashierDeposit category: 'ServiciosFinancieros-Ejercicio'!
+AccountTransaction subclass: #CashierDeposit
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Deposit methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:45'!
+!CashierDeposit methodsFor: 'initialization' stamp: 'HernanWilkinson 7/13/2011 18:45'!
 initializeFor: aValue
 
 	value := aValue ! !
 
 
-!Deposit methodsFor: 'as yet unclassified' stamp: 'RV 11/20/2021 20:38:31'!
+!CashierDeposit methodsFor: 'as yet unclassified' stamp: 'RV 11/20/2021 20:38:31'!
 netValue
 	^self value! !
 
-!Deposit methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:22:52'!
+!CashierDeposit methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:22:52'!
 value
 	^value! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'Deposit class' category: 'ServiciosFinancieros-Ejercicio'!
-Deposit class
+!classDefinition: 'CashierDeposit class' category: 'ServiciosFinancieros-Ejercicio'!
+CashierDeposit class
 	instanceVariableNames: ''!
 
-!Deposit class methodsFor: 'instance creation' stamp: 'AMV 11/24/2021 22:59:22'!
+!CashierDeposit class methodsFor: 'instance creation' stamp: 'AMV 11/24/2021 22:59:22'!
+for: aValue  
+
+	^ self new initializeFor: aValue ! !
+
+
+!classDefinition: #CashierWithdraw category: 'ServiciosFinancieros-Ejercicio'!
+AccountTransaction subclass: #CashierWithdraw
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!CashierWithdraw methodsFor: 'initialization' stamp: 'RV 11/18/2021 21:33:26'!
+initializeFor: aValue
+
+	value := aValue ! !
+
+
+!CashierWithdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/20/2021 20:38:12'!
+netValue
+	^ self value negated! !
+
+!CashierWithdraw methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:23:01'!
+value
+	^value! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CashierWithdraw class' category: 'ServiciosFinancieros-Ejercicio'!
+CashierWithdraw class
+	instanceVariableNames: ''!
+
+!CashierWithdraw class methodsFor: 'instance creation' stamp: 'AMV 11/24/2021 22:59:22'!
 for: aValue  
 
 	^ self new initializeFor: aValue ! !
@@ -299,38 +424,37 @@ register: aValue on: account from: aTransfer
 	^ transaction! !
 
 
-!classDefinition: #Withdraw category: 'ServiciosFinancieros-Ejercicio'!
-AccountTransaction subclass: #Withdraw
-	instanceVariableNames: ''
+!classDefinition: #Portfolio category: 'ServiciosFinancieros-Ejercicio'!
+Object subclass: #Portfolio
+	instanceVariableNames: 'financialAssets'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Withdraw methodsFor: 'initialization' stamp: 'RV 11/18/2021 21:33:26'!
-initializeFor: aValue
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:39:02'!
+add: aReceptiveAccount 
+	"financial assets es activos financieros. Definicion de Portfolio : 	https://www.eleconomista.es/diccionario-de-economia/portfolio"
+	financialAssets add: aReceptiveAccount 
+	! !
 
-	value := aValue ! !
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:42:58'!
+balance
+	
+	^financialAssets sum:[ :aFinancialAsset |
+		aFinancialAsset balance.
+		] ifEmpty: [ 0 ]! !
 
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 21:37:49'!
+has: aTransaction onA: aReceptiveAccount
 
+	^(financialAssets includes:aReceptiveAccount) and:[
+		(financialAssets anySatisfy:[:aSavedFinancialAsset|
+			aSavedFinancialAsset hasRegistered: aTransaction])
+			] .! !
 
-!Withdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/20/2021 20:38:12'!
-netValue
-	^ self value negated! !
-
-!Withdraw methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:23:01'!
-value
-	^value! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Withdraw class' category: 'ServiciosFinancieros-Ejercicio'!
-Withdraw class
-	instanceVariableNames: ''!
-
-!Withdraw class methodsFor: 'instance creation' stamp: 'AMV 11/24/2021 22:59:22'!
-for: aValue  
-
-	^ self new initializeFor: aValue ! !
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:38:54'!
+initialize
+	financialAssets := OrderedCollection new.! !
 
 
 !classDefinition: #ReceptiveAccount category: 'ServiciosFinancieros-Ejercicio'!
