@@ -85,7 +85,8 @@ test06aPortolioKnowsRegisteredTransactionsOnAddedPortfoliosAndAccounts
 	
 ! !
 
-!PortfolioTest methodsFor: 'transactions' stamp: 'RV 11/28/2021 18:39:10'!
+
+!PortfolioTest methodsFor: 'registering' stamp: 'RV 11/28/2021 18:39:10'!
 test07aPortfolioCanGotAllAddedTransactionsOfTheirAccounts
 
 	aPortfolio add: anAccountWithADepositof100 .
@@ -96,7 +97,7 @@ test07aPortfolioCanGotAllAddedTransactionsOfTheirAccounts
 	
 ! !
 
-!PortfolioTest methodsFor: 'transactions' stamp: 'RV 11/28/2021 18:39:10'!
+!PortfolioTest methodsFor: 'registering' stamp: 'RV 11/28/2021 18:39:10'!
 test08aPortfolioCanGotAllAddedTransactionsOfTheirPortfolios
 
 	otherPortfolio 	add: anAccountWithADepositof100 .
@@ -300,12 +301,12 @@ initializeFor: aValue
 	value := aValue ! !
 
 
-!CashierDeposit methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:17:29'!
+!CashierDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:17:29'!
 affectBalance: subtotalBalance
 	 ^subtotalBalance + self value
 	! !
 
-!CashierDeposit methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:20:07'!
+!CashierDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:20:07'!
 value
 	^value copy! !
 
@@ -334,11 +335,11 @@ initializeFor: aValue
 	value := aValue ! !
 
 
-!CashierWithdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:18:10'!
+!CashierWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:18:10'!
 affectBalance: subtotalBalance
 	^ subtotalBalance - self value! !
 
-!CashierWithdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:20:19'!
+!CashierWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:20:19'!
 value
 	^value copy! !
 
@@ -361,21 +362,22 @@ AccountTransaction subclass: #TransferDeposit
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!TransferDeposit methodsFor: 'value' stamp: 'AMV 11/24/2021 23:05:08'!
+!TransferDeposit methodsFor: 'initialization' stamp: 'AMV 11/24/2021 23:05:08'!
 initializeFor: aValue from: aTransfer 
 	value := aValue.
 	transfer := aTransfer.! !
 
 
-!TransferDeposit methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:31:08'!
-affectBalance: aSubtotalBalance
-	^aSubtotalBalance - self value! !
-
-!TransferDeposit methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:18:34'!
+!TransferDeposit methodsFor: 'transfer' stamp: 'AMV 11/24/2021 23:18:34'!
 counterpart
 	^transfer transferWithdraw ! !
 
-!TransferDeposit methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:20:34'!
+
+!TransferDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 19:33:36'!
+affectBalance: aSubtotalBalance
+	^aSubtotalBalance + self value! !
+
+!TransferDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:20:34'!
 value
 	^value copy! !
 
@@ -413,15 +415,16 @@ initializeFor: aValue from: aTransfer
 	transfer := aTransfer.! !
 
 
-!TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:23:50'!
-affectBalance: aSubtotalBalance
-	^aSubtotalBalance - self value! !
-
-!TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:18:34'!
+!TransferWithdraw methodsFor: 'transfer' stamp: 'AMV 11/24/2021 23:18:34'!
 counterpart
 	^transfer transferDeposit ! !
 
-!TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:20:54'!
+
+!TransferWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:23:50'!
+affectBalance: aSubtotalBalance
+	^aSubtotalBalance - self value! !
+
+!TransferWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:20:54'!
 value
 	^value copy! !
 
@@ -446,37 +449,51 @@ register: aValue on: account from: aTransfer
 	^ transaction! !
 
 
+!classDefinition: #FinancialAssets category: 'ServiciosFinancieros-Ejercicio'!
+Object subclass: #FinancialAssets
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!FinancialAssets methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 19:12:02'!
+balance
+	self subclassResponsibility.! !
+
+!FinancialAssets methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 19:15:38'!
+hasRegistered: aTransaction! !
+
+!FinancialAssets methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 19:15:00'!
+transactions
+	self subclassResponsibility.! !
+
+
 !classDefinition: #Portfolio category: 'ServiciosFinancieros-Ejercicio'!
-Object subclass: #Portfolio
+FinancialAssets subclass: #Portfolio
 	instanceVariableNames: 'financialAssets'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:39:02'!
-add: aReceptiveAccount 
-	"financial assets es activos financieros. Definicion de Portfolio : 	https://www.eleconomista.es/diccionario-de-economia/portfolio"
-	financialAssets add: aReceptiveAccount 
-	! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:42:58'!
-balance
-	
-	^financialAssets sum:[ :aFinancialAsset |
-		aFinancialAsset balance.
-		] ifEmpty: [ 0 ]! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:39:10'!
-hasRegistered: aTransaction
-	^(financialAssets anySatisfy:[:aSavedFinancialAsset|
-			aSavedFinancialAsset hasRegistered: aTransaction])
-			! !
-
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:38:54'!
+!Portfolio methodsFor: 'initialization' stamp: 'RV 11/25/2021 20:38:54'!
 initialize
 	financialAssets := OrderedCollection new.! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 17:05:04'!
+
+!Portfolio methodsFor: 'financial asset' stamp: 'RV 11/28/2021 19:32:06'!
+balance	
+	^financialAssets sum:[ :aFinancialAsset |
+		aFinancialAsset balance.
+	] ifEmpty: [ 0 *peso ]! !
+
+!Portfolio methodsFor: 'financial asset' stamp: 'RV 11/28/2021 19:13:07'!
+hasRegistered: aTransaction
+	^ financialAssets anySatisfy:[:aSavedFinancialAsset|
+			aSavedFinancialAsset hasRegistered: aTransaction
+	]
+			! !
+
+!Portfolio methodsFor: 'financial asset' stamp: 'RV 11/28/2021 17:05:04'!
 transactions
 	| totalTransactions |
 	totalTransactions := OrderedCollection new.
@@ -485,9 +502,16 @@ transactions
 		].
 	^totalTransactions copy.! !
 
+
+!Portfolio methodsFor: 'portfolio behaviour' stamp: 'RV 11/28/2021 19:12:28'!
+add: aFinancialAsset
+	"financial assets es activos financieros. Definicion de Portfolio : 	https://www.eleconomista.es/diccionario-de-economia/portfolio"
+	financialAssets add: aFinancialAsset
+	! !
+
 
 !classDefinition: #ReceptiveAccount category: 'ServiciosFinancieros-Ejercicio'!
-Object subclass: #ReceptiveAccount
+FinancialAssets subclass: #ReceptiveAccount
 	instanceVariableNames: 'transactions'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -499,27 +523,30 @@ initialize
 	transactions := OrderedCollection new.! !
 
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'RV 11/28/2021 18:16:43'!
+!ReceptiveAccount methodsFor: 'financial asset' stamp: 'RV 11/28/2021 19:32:15'!
 balance
-	^ transactions inject: 0 into: [:subtotal : transaction| transaction affectBalance: subtotal].
+	^ transactions inject: 0*peso into: [:subtotalBalance : eachTransaction| 
+		eachTransaction affectBalance: subtotalBalance.
+	].
 ! !
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'NR 10/17/2019 03:28:43'!
+!ReceptiveAccount methodsFor: 'financial asset' stamp: 'NR 10/17/2019 03:28:43'!
 hasRegistered: aTransaction
 
 	^ transactions includes: aTransaction 
 ! !
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'HernanWilkinson 7/13/2011 18:37'!
+!ReceptiveAccount methodsFor: 'financial asset' stamp: 'HernanWilkinson 7/13/2011 18:37'!
+transactions 
+
+	^ transactions copy! !
+
+
+!ReceptiveAccount methodsFor: 'receptive account behaviour' stamp: 'HernanWilkinson 7/13/2011 18:37'!
 register: aTransaction
 
 	transactions add: aTransaction 
 ! !
-
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'HernanWilkinson 7/13/2011 18:37'!
-transactions 
-
-	^ transactions copy! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Ejercicio'!
