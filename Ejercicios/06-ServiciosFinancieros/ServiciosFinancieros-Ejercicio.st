@@ -85,16 +85,25 @@ test06aPortolioKnowsRegisteredTransactionsOnAddedPortfoliosAndAccounts
 	
 ! !
 
-!PortfolioTest methodsFor: 'transactions' stamp: 'RV 11/28/2021 17:09:23'!
+!PortfolioTest methodsFor: 'transactions' stamp: 'RV 11/28/2021 18:39:10'!
 test07aPortfolioCanGotAllAddedTransactionsOfTheirAccounts
 
 	aPortfolio add: anAccountWithADepositof100 .
 	aPortfolio add: anAccountWithAWithdrawOf75 .
 
-	self assert: (aPortfolio has: aDepositOf100 onA: anAccountWithADepositof100).
-	self assert: (aPortfolio has: aWithdrawOf75 onA:  anAccountWithAWithdrawOf75).
+	self assert: (aPortfolio hasRegistered: aDepositOf100 ).
+	self assert: (aPortfolio hasRegistered: aWithdrawOf75 ).
 	
 ! !
+
+!PortfolioTest methodsFor: 'transactions' stamp: 'RV 11/28/2021 18:39:10'!
+test08aPortfolioCanGotAllAddedTransactionsOfTheirPortfolios
+
+	otherPortfolio 	add: anAccountWithADepositof100 .
+	aPortfolio add: otherPortfolio .
+
+	self assert: (aPortfolio hasRegistered: aDepositOf100 ).
+	! !
 
 
 !classDefinition: #ReceptiveAccountTest category: 'ServiciosFinancieros-Ejercicio'!
@@ -256,6 +265,11 @@ Object subclass: #AccountTransaction
 value 
 	self subclassResponsibility ! !
 
+
+!AccountTransaction methodsFor: 'balance' stamp: 'RV 11/28/2021 18:31:25'!
+affectBalance: aSubtotalBalance
+	self subclassResponsibility.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'AccountTransaction class' category: 'ServiciosFinancieros-Ejercicio'!
@@ -286,13 +300,14 @@ initializeFor: aValue
 	value := aValue ! !
 
 
-!CashierDeposit methodsFor: 'as yet unclassified' stamp: 'RV 11/20/2021 20:38:31'!
-netValue
-	^self value! !
+!CashierDeposit methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:17:29'!
+affectBalance: subtotalBalance
+	 ^subtotalBalance + self value
+	! !
 
-!CashierDeposit methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:22:52'!
+!CashierDeposit methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:20:07'!
 value
-	^value! !
+	^value copy! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -319,13 +334,13 @@ initializeFor: aValue
 	value := aValue ! !
 
 
-!CashierWithdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/20/2021 20:38:12'!
-netValue
-	^ self value negated! !
+!CashierWithdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:18:10'!
+affectBalance: subtotalBalance
+	^ subtotalBalance - self value! !
 
-!CashierWithdraw methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:23:01'!
+!CashierWithdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:20:19'!
 value
-	^value! !
+	^value copy! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -341,7 +356,7 @@ for: aValue
 
 !classDefinition: #TransferDeposit category: 'ServiciosFinancieros-Ejercicio'!
 AccountTransaction subclass: #TransferDeposit
-	instanceVariableNames: 'contraparte transfer'
+	instanceVariableNames: 'transfer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
@@ -352,17 +367,17 @@ initializeFor: aValue from: aTransfer
 	transfer := aTransfer.! !
 
 
+!TransferDeposit methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:31:08'!
+affectBalance: aSubtotalBalance
+	^aSubtotalBalance - self value! !
+
 !TransferDeposit methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:18:34'!
 counterpart
 	^transfer transferWithdraw ! !
 
-!TransferDeposit methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 22:51:56'!
-netValue
-	^self value! !
-
-!TransferDeposit methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:22:55'!
+!TransferDeposit methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:20:34'!
 value
-	^value! !
+	^value copy! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -398,17 +413,17 @@ initializeFor: aValue from: aTransfer
 	transfer := aTransfer.! !
 
 
+!TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:23:50'!
+affectBalance: aSubtotalBalance
+	^aSubtotalBalance - self value! !
+
 !TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:18:34'!
 counterpart
 	^transfer transferDeposit ! !
 
-!TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 22:52:03'!
-netValue
-	^self value negated! !
-
-!TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:22:58'!
+!TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:20:54'!
 value
-	^value! !
+	^value copy! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -451,13 +466,11 @@ balance
 		aFinancialAsset balance.
 		] ifEmpty: [ 0 ]! !
 
-!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 21:37:49'!
-has: aTransaction onA: aReceptiveAccount
-
-	^(financialAssets includes:aReceptiveAccount) and:[
-		(financialAssets anySatisfy:[:aSavedFinancialAsset|
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 18:39:10'!
+hasRegistered: aTransaction
+	^(financialAssets anySatisfy:[:aSavedFinancialAsset|
 			aSavedFinancialAsset hasRegistered: aTransaction])
-			] .! !
+			! !
 
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:38:54'!
 initialize
@@ -486,10 +499,10 @@ initialize
 	transactions := OrderedCollection new.! !
 
 
-!ReceptiveAccount methodsFor: 'main protocol' stamp: 'RV 11/20/2021 20:37:16'!
+!ReceptiveAccount methodsFor: 'main protocol' stamp: 'RV 11/28/2021 18:16:43'!
 balance
-
-	^transactions sum: [ :aTransaction | 	aTransaction netValue. ] ifEmpty: [ 0 ]! !
+	^ transactions inject: 0 into: [:subtotal : transaction| transaction affectBalance: subtotal].
+! !
 
 !ReceptiveAccount methodsFor: 'main protocol' stamp: 'NR 10/17/2019 03:28:43'!
 hasRegistered: aTransaction
