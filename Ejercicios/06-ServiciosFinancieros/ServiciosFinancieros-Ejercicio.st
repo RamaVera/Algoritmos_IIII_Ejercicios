@@ -1,91 +1,98 @@
 !classDefinition: #PortfolioTest category: 'ServiciosFinancieros-Ejercicio'!
 TestCase subclass: #PortfolioTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'oneWithdraw aPortfolio anAccountWithADepositof100 aDepositOf100 anAccountWithAWithdrawOf75 aWithdrawOf75 otherPortfolio anAccountWithADepositof25 aDepositOf25'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:36:53'!
+!PortfolioTest methodsFor: 'setup' stamp: 'RV 11/28/2021 17:02:53'!
+setUp
+	aPortfolio := 	Portfolio new.
+	otherPortfolio := Portfolio new.
+	
+	anAccountWithADepositof100 := ReceptiveAccount new.
+	aDepositOf100 := CashierDeposit register: 100* peso  on: anAccountWithADepositof100. 
+	
+	anAccountWithAWithdrawOf75 := ReceptiveAccount new.
+	aWithdrawOf75 := CashierWithdraw register: 75* peso  on: anAccountWithAWithdrawOf75. 	
+	
+	anAccountWithADepositof25 := ReceptiveAccount new.
+	aDepositOf25 := CashierDeposit register: 25* peso  on: anAccountWithADepositof25. 
+	! !
+
+
+!PortfolioTest methodsFor: 'balance' stamp: 'RV 11/28/2021 16:48:44'!
 test01AnEmptyPortfolioHasZeroBalance
-
-	| aPortfolioToTest |
-	aPortfolioToTest := 	Portfolio new.
 	
-	
-	self assert: 0 equals: aPortfolioToTest balance ! !
+	self assert: 0 equals: aPortfolio balance ! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:37:07'!
+!PortfolioTest methodsFor: 'balance' stamp: 'RV 11/28/2021 16:51:33'!
 test02aPortfolioWithOneAccountHasTheSameBalanceOfTheAccount
 
-	| aPortfolioToTest anAccount |
-	aPortfolioToTest := 	Portfolio new.
+	aPortfolio add: anAccountWithADepositof100.
 	
-	anAccount := ReceptiveAccount new.
-	CashierDeposit register: 100* peso  on: anAccount. 
-	
-	aPortfolioToTest add: anAccount.
-	
-	self assert: 100* peso equals: aPortfolioToTest balance ! !
+	self assert: 100* peso equals: aPortfolio balance ! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:43:59'!
+!PortfolioTest methodsFor: 'balance' stamp: 'RV 11/28/2021 16:53:35'!
 test03aPortfolioWithManyAccountHasTheSameBalanceOfTheTotalOfAccounts
 
-	| aPortfolioToTest anotherAccount oneAccount |
-	aPortfolioToTest := 	Portfolio new.
+	aPortfolio add: anAccountWithADepositof100.
+	aPortfolio add: anAccountWithAWithdrawOf75.
 	
-	oneAccount := ReceptiveAccount new.
-	CashierDeposit register: 100* peso  on: oneAccount. 
-	anotherAccount := ReceptiveAccount new.
-	CashierWithdraw register: 75* peso  on: anotherAccount. 	
-	
-	aPortfolioToTest add: oneAccount.
-	aPortfolioToTest add: anotherAccount.
-	
-	self assert: 25* peso equals: aPortfolioToTest balance ! !
+	self assert: 25* peso equals: aPortfolio balance ! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:52:07'!
-test04aPortfolioCanHaveAnotherPortfolioInsideInAdditionToReceptiveAccountsAndObtainAllTheirBalance
+!PortfolioTest methodsFor: 'balance' stamp: 'RV 11/28/2021 16:57:32'!
+test04aPortfolioCanHavePortfoliosOrReceptiveAccountsAndCanGetTheTotalBalanceOfThose
 
-	| aPortfolioToTest anotherAccount oneAccount otherAccount anotherPortfolio |
-	aPortfolioToTest := 	Portfolio new.
-	anotherPortfolio := 	Portfolio new.
-	
-	oneAccount := ReceptiveAccount new.
-	otherAccount := ReceptiveAccount new.
-	anotherAccount := ReceptiveAccount new.
-	
-	CashierDeposit register: 100* peso  on: oneAccount. 
-	Transfer from: otherAccount to: anotherAccount for: 300* peso.
-	CashierWithdraw register: 100* peso  on: anotherAccount. 
-	
-	
-	aPortfolioToTest add: oneAccount.
-	aPortfolioToTest add: otherAccount.
-	
-	anotherPortfolio add: anotherAccount.
-	
-	aPortfolioToTest add: anotherPortfolio.
-	
-	self assert: 0* peso equals: aPortfolioToTest balance ! !
 
-!PortfolioTest methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 21:39:08'!
-test05PortolioKnowsRegisteredTransactionsOnSavedAccounts 
-
-	| aPortfolioToTest oneAccount otherAccount deposit withdraw |
+	aPortfolio add: anAccountWithADepositof100 .
+	aPortfolio add: anAccountWithAWithdrawOf75 .
+	otherPortfolio add: anAccountWithADepositof25 .
 	
-	aPortfolioToTest := 	Portfolio new.
+	aPortfolio add: otherPortfolio.
 	
-	oneAccount := ReceptiveAccount new.
-	otherAccount := ReceptiveAccount new.
+	self assert: 50* peso equals: aPortfolio balance ! !
+
+
+!PortfolioTest methodsFor: 'transactions' stamp: 'RV 11/28/2021 17:04:14'!
+test05aPortolioKnowsRegisteredTransactionsOnAddedAccounts 
+
+	| totalTransactions |
 	
-	deposit := CashierDeposit register: 100 * peso on: oneAccount.
-	withdraw := CashierWithdraw register: 50 * peso on: otherAccount.
+	totalTransactions := OrderedCollection with: aDepositOf100 with: aWithdrawOf75 with: aDepositOf25.
+	
+	aPortfolio add: anAccountWithADepositof100.
+	aPortfolio add: anAccountWithAWithdrawOf75.
+	aPortfolio add: anAccountWithADepositof25.
 
-	aPortfolioToTest add: oneAccount.
-	aPortfolioToTest add: otherAccount.
+	self assert: totalTransactions equals: aPortfolio transactions.
+	
+! !
 
-	self assert: (aPortfolioToTest has: deposit onA: oneAccount).
-	self assert: (aPortfolioToTest has: withdraw onA:  otherAccount).
+!PortfolioTest methodsFor: 'transactions' stamp: 'RV 11/28/2021 17:07:19'!
+test06aPortolioKnowsRegisteredTransactionsOnAddedPortfoliosAndAccounts 
+
+	| totalTransactions |
+	
+	totalTransactions := OrderedCollection with: aDepositOf100 with: aWithdrawOf75 with: aDepositOf25.
+	
+	aPortfolio add: anAccountWithADepositof100.
+	aPortfolio add: anAccountWithAWithdrawOf75.
+	otherPortfolio add: anAccountWithADepositof25.
+	aPortfolio add: otherPortfolio.
+
+	self assert: totalTransactions equals: aPortfolio transactions.
+	
+! !
+
+!PortfolioTest methodsFor: 'transactions' stamp: 'RV 11/28/2021 17:09:23'!
+test07aPortfolioCanGotAllAddedTransactionsOfTheirAccounts
+
+	aPortfolio add: anAccountWithADepositof100 .
+	aPortfolio add: anAccountWithAWithdrawOf75 .
+
+	self assert: (aPortfolio has: aDepositOf100 onA: anAccountWithADepositof100).
+	self assert: (aPortfolio has: aWithdrawOf75 onA:  anAccountWithAWithdrawOf75).
 	
 ! !
 
@@ -455,6 +462,15 @@ has: aTransaction onA: aReceptiveAccount
 !Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/25/2021 20:38:54'!
 initialize
 	financialAssets := OrderedCollection new.! !
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 11/28/2021 17:05:04'!
+transactions
+	| totalTransactions |
+	totalTransactions := OrderedCollection new.
+	financialAssets do:[ :eachFinancialAsset |
+		totalTransactions addAllLast: eachFinancialAsset transactions.
+		].
+	^totalTransactions copy.! !
 
 
 !classDefinition: #ReceptiveAccount category: 'ServiciosFinancieros-Ejercicio'!
