@@ -141,6 +141,30 @@ test11aPortfolioCantBeAddedToTheirself
 		] 
 ! !
 
+!PortfolioTest methodsFor: 'portfolio validating' stamp: 'AMV 11/29/2021 15:03:12'!
+test12CannotAddAnAccountToAPortfolioWhenItIsContainerPortfolioAlreadyHasTheAccount
+
+	aPortfolio 	add: anAccountWithADepositof100 .
+	aPortfolio add: otherPortfolio.
+	
+	self should: [ otherPortfolio 	add: anAccountWithADepositof100 . ] raise: Error
+		withExceptionDo:[ :anError |
+			self assert: anError messageText equals: Portfolio errorMessageDuplicateFinancialAsset.
+		] 
+! !
+
+!PortfolioTest methodsFor: 'portfolio validating' stamp: 'AMV 11/29/2021 15:03:57'!
+test13CannotAddAPortfolioIntoAnotherPortfolioIfTheyContainTheSameAccount
+
+	aPortfolio 	add: anAccountWithADepositof100 .
+	otherPortfolio 	add: anAccountWithADepositof100 .
+	
+	self should: [ aPortfolio 	add: otherPortfolio . ] raise: Error
+		withExceptionDo:[ :anError |
+			self assert: anError messageText equals: Portfolio errorMessageDuplicateFinancialAsset.
+		] 
+! !
+
 
 !classDefinition: #ReceptiveAccountTest category: 'ServiciosFinancieros-Ejercicio'!
 TestCase subclass: #ReceptiveAccountTest
@@ -494,7 +518,7 @@ register: aValue on: account from: aTransfer
 
 !classDefinition: #FinancialAssets category: 'ServiciosFinancieros-Ejercicio'!
 Object subclass: #FinancialAssets
-	instanceVariableNames: ''
+	instanceVariableNames: 'containedByFinancialAsset'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
@@ -518,9 +542,10 @@ FinancialAssets subclass: #Portfolio
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!Portfolio methodsFor: 'initialization' stamp: 'RV 11/25/2021 20:38:54'!
+!Portfolio methodsFor: 'initialization' stamp: 'AMV 11/29/2021 14:04:15'!
 initialize
-	financialAssets := OrderedCollection new.! !
+	financialAssets := OrderedCollection new.
+	containedByFinancialAsset := OrderedCollection new.! !
 
 
 !Portfolio methodsFor: 'financial asset' stamp: 'RV 11/28/2021 19:32:06'!
@@ -541,22 +566,24 @@ transactions
 	^(self obtainAllTransactionsInThePortfolio) copy! !
 
 
-!Portfolio methodsFor: 'portfolio behaviour' stamp: 'RV 11/29/2021 02:10:23'!
+!Portfolio methodsFor: 'portfolio behaviour' stamp: 'AMV 11/29/2021 14:18:34'!
 add: aFinancialAsset
 	"financial assets es activos financieros en ingles.
 	Definicion de Portfolio : 	https://www.eleconomista.es/diccionario-de-economia/portfolio"
 	
-	( (self itIsMe: aFinancialAsset) or: [ self iAmAlreadyContaining: aFinancialAsset ] ) ifTrue: [
-		self error: self class errorMessageDuplicateFinancialAsset 
-	].
+	self validateNewFinancialAsset: aFinancialAsset .
 	
-	financialAssets add: aFinancialAsset
+	financialAssets add: (aFinancialAsset from: self)
 	! !
 
 
 !Portfolio methodsFor: 'private' stamp: 'RV 11/28/2021 23:19:56'!
 appendToThe: subTotalOfTransactions transactionsOf: eachFinancialAsset
 	^ subTotalOfTransactions,eachFinancialAsset transactions! !
+
+!Portfolio methodsFor: 'private' stamp: 'AMV 11/29/2021 13:54:29'!
+from: containerFinancialAsset
+	containedByFinancialAsset add: containerFinancialAsset ! !
 
 !Portfolio methodsFor: 'private' stamp: 'RV 11/29/2021 02:09:51'!
 iAmAlreadyContaining: aFinancialAsset
@@ -569,12 +596,39 @@ itIsMe: aFinancialAsset
 
 	^ aFinancialAsset = self! !
 
+!Portfolio methodsFor: 'private' stamp: 'AMV 11/29/2021 12:17:04'!
+listOfFinancialAssets
+	^financialAssets copy! !
+
 !Portfolio methodsFor: 'private' stamp: 'RV 11/28/2021 23:22:03'!
 obtainAllTransactionsInThePortfolio
 	^ financialAssets inject: (OrderedCollection new) into: [ :subTotalOfTransactions :eachFinancialAsset |
 			self appendToThe: subTotalOfTransactions transactionsOf: eachFinancialAsset.
 		]! !
 
+!Portfolio methodsFor: 'private' stamp: 'AMV 11/29/2021 14:54:44'!
+validateNewFinancialAsset: aFinancialAsset
+	(self itIsMe: aFinancialAsset) ifTrue: [
+		self error: self class errorMessageDuplicateFinancialAsset
+		].
+	
+	(self iAmAlreadyContaining: aFinancialAsset) ifTrue: [
+		self error: self class errorMessageDuplicateFinancialAsset
+		].
+	
+	(self myContainerFinanceAssetAlreadyContains: aFinancialAsset ) ifTrue: [
+		self error: self class errorMessageDuplicateFinancialAsset
+		].
+	
+	(self anyOfMyFinancialAssetsAreContaindedBy: aFinancialAsset) ifTrue: [
+		self error: self class errorMessageDuplicateFinancialAsset
+		].! !
+
+
+!Portfolio methodsFor: 'including' stamp: 'AMV 11/29/2021 14:54:44'!
+anyOfMyFinancialAssetsAreContaindedBy: aFinancialAsset
+
+	^ aFinancialAsset containsAnyOfTheFinancialAssetsOf: self! !
 
 !Portfolio methodsFor: 'including' stamp: 'RV 11/29/2021 01:46:29'!
 contains: aFinancialAsset 
@@ -586,9 +640,20 @@ containsAReceptiveAccount: aReceptiveAccount
 		eachFinancialAsset contains: aReceptiveAccount.]) ifTrue: [self error: self class errorMessageDuplicateFinancialAsset ].
 	! !
 
+!Portfolio methodsFor: 'including' stamp: 'AMV 11/29/2021 14:56:30'!
+containsAnyOfTheFinancialAssetsOf: anotherPortfolio
+	^((anotherPortfolio listOfFinancialAssets) anySatisfy:[ :eachFinancialAsset | 
+		self iAmAlreadyContaining: eachFinancialAsset.])! !
+
 !Portfolio methodsFor: 'including' stamp: 'RV 11/29/2021 01:54:40'!
 isIncludedOnAReceptiveAccount: aReceptiveAccount 
 	^ false! !
+
+!Portfolio methodsFor: 'including' stamp: 'AMV 11/29/2021 14:52:40'!
+myContainerFinanceAssetAlreadyContains: aFinancialAsset
+
+	^ containedByFinancialAsset anySatisfy: [ :aContainerFinancialAsset | 
+		aContainerFinancialAsset iAmAlreadyContaining: aFinancialAsset]! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -608,10 +673,11 @@ FinancialAssets subclass: #ReceptiveAccount
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!ReceptiveAccount methodsFor: 'initialization' stamp: 'NR 10/17/2019 15:06:56'!
+!ReceptiveAccount methodsFor: 'initialization' stamp: 'AMV 11/29/2021 14:10:34'!
 initialize
 
-	transactions := OrderedCollection new.! !
+	transactions := OrderedCollection new.
+	containedByFinancialAsset := OrderedCollection new.! !
 
 
 !ReceptiveAccount methodsFor: 'financial asset' stamp: 'RV 11/28/2021 19:32:15'!
@@ -656,6 +722,15 @@ isIncludedOnAReceptiveAccount: aReceptiveAccount
 isincludedOnAPortfolio: aPortfolio 
 	^aPortfolio containsAReceptiveAccount: self.
 	! !
+
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AMV 11/29/2021 12:28:23'!
+containsAnyOfTheFinancialAssetsOf: anotherPortfolio
+	^false! !
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AMV 11/29/2021 12:07:03'!
+from: containerFinancialAsset
+	containedByFinancialAsset := containerFinancialAsset ! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Ejercicio'!
