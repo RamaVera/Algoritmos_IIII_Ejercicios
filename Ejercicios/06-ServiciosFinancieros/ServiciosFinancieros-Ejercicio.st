@@ -109,150 +109,174 @@ test08aPortfolioCanGotAllAddedTransactionsOfTheirPortfolios
 
 !classDefinition: #ReceptiveAccountTest category: 'ServiciosFinancieros-Ejercicio'!
 TestCase subclass: #ReceptiveAccountTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'anAccount aDepositOf50Pesos anAmountOf100 anAmountOfZero anAmountOf50'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'LL 7/1/2021 03:10:43'!
-test01ReceptiveAccountHaveZeroAsBalanceWhenCreated 
-
-	| account |
+!ReceptiveAccountTest methodsFor: 'setup' stamp: 'RV 11/28/2021 22:46:43'!
+setUp
+	anAccount := ReceptiveAccount new.
 	
-	account := ReceptiveAccount new.
+	anAmountOfZero := 0*peso.
+	anAmountOf50  := 50 * peso.
+	anAmountOf100 := 100*peso.! !
 
-	self assert: 0 equals: account balance
+
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/28/2021 22:45:25'!
+test01ReceptiveAccountHaveZeroAsBalanceWhenCreated 
+	self assert: anAmountOfZero equals: anAccount balance
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:34:55'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/28/2021 22:45:43'!
 test02DepositIncreasesBalanceOnTransactionValue 
 
-	| account |
-	
-	account := ReceptiveAccount  new.
-	CashierDeposit register: 100 * peso on: account.
+	CashierDeposit register: anAmountOf100 on: anAccount.
 		
-	self assert: 100 * peso equals: account balance
+	self assert: anAmountOf100 equals: anAccount balance
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:35:08'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/28/2021 22:48:16'!
 test03WithdrawDecreasesBalanceOnTransactionValue 
 
-	| account |
+	| amountDifference |
+	CashierDeposit register: anAmountOf100 on: anAccount.
+	CashierWithdraw register: anAmountOf50 on: anAccount.
 	
-	account := ReceptiveAccount new.
-	CashierDeposit register: 100 * peso on: account.
-	CashierWithdraw register: 50 * peso on: account.
-		
-	self assert: 50 * peso equals: account balance
+	amountDifference := anAmountOf100  - anAmountOf50.		
+	
+	self assert: amountDifference equals: anAccount balance
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:35:08'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/28/2021 22:58:17'!
 test04WithdrawValueMustBePositive 
-
-	| account withdrawValue |
 	
-	account := ReceptiveAccount new.
-	withdrawValue := 50 * peso.
+	| aWithdrawOf50 |
+	aWithdrawOf50 := CashierWithdraw register: anAmountOf50 on: anAccount.
 	
-	self assert: withdrawValue equals: (CashierWithdraw register: withdrawValue on: account) value
+	self assert: (aWithdrawOf50 wasTheAmountof: anAmountOf50).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:35:08'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/28/2021 22:59:58'!
 test05ReceptiveAccountKnowsRegisteredTransactions 
 
-	| account deposit withdraw |
-	
-	account := ReceptiveAccount new.
-	deposit := CashierDeposit register: 100 * peso on: account.
-	withdraw := CashierWithdraw register: 50 * peso on: account.
+	| aDeposit aWithdraw |
+	aDeposit := CashierDeposit register: anAmountOf100 on: anAccount.
+	aWithdraw := CashierWithdraw register: anAmountOf50 on: anAccount.
 		
-	self assert: (account hasRegistered: deposit).
-	self assert: (account hasRegistered: withdraw).
+	self assert: (anAccount hasRegistered: aDeposit).
+	self assert: (anAccount hasRegistered: aWithdraw).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:35:08'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/28/2021 23:05:02'!
 test06ReceptiveAccountDoNotKnowNotRegisteredTransactions
 
-	| account deposit withdraw |
+	|  aDeposit aWithdraw |
 	
-	account := ReceptiveAccount new.
-	deposit :=  CashierDeposit for: 100 * peso .
-	withdraw := CashierWithdraw for: 50 * peso .
+	aDeposit :=  CashierDeposit for: anAmountOf100 .
+	aWithdraw := CashierWithdraw for: anAmountOf50 .
 		
-	self deny: (account hasRegistered: deposit).
-	self deny: (account hasRegistered: withdraw).
+	self deny: (anAccount hasRegistered: aDeposit).
+	self deny: (anAccount hasRegistered: aWithdraw).
 ! !
 
-!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/25/2021 19:34:55'!
+!ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/28/2021 23:02:47'!
 test07AccountKnowsItsTransactions 
 
-	| account deposit |
-	
-	account := ReceptiveAccount new.
-	
-	deposit := CashierDeposit register: 50 * peso on: account.
+	| aDeposit |
+
+	aDeposit := CashierDeposit register: anAmountOf50 on: anAccount.
 		
-	self assert: 1 equals: account transactions size.
-	self assert: (account transactions includes: deposit).
-! !
+	self assertThatThereisOnlyOneTransactionAndItWas: aDeposit.! !
+
+
+!ReceptiveAccountTest methodsFor: 'support' stamp: 'RV 11/28/2021 23:03:03'!
+assertThatThereisOnlyOneTransactionAndItWas: aDeposit
+
+	self assert: 1 equals: anAccount transactions size.
+	self assert: (anAccount transactions includes: aDeposit)! !
 
 
 !classDefinition: #TransferTest category: 'ServiciosFinancieros-Ejercicio'!
 TestCase subclass: #TransferTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'anOriginAccount aDestinationAccount anAmountToTransfer aNegativeAmountToTransfer anZeroAmountToTransfer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!TransferTest methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:35:15'!
+!TransferTest methodsFor: 'setup' stamp: 'RV 11/28/2021 22:37:23'!
+setUp
+	
+	anAmountToTransfer := 10*peso.
+	aNegativeAmountToTransfer  := -10 *peso.
+	anZeroAmountToTransfer := 0 *peso.
+
+	anOriginAccount := ReceptiveAccount new.
+	aDestinationAccount := ReceptiveAccount new.
+! !
+
+
+!TransferTest methodsFor: 'test' stamp: 'RV 11/28/2021 22:33:56'!
 test01TransferChangesBalanceTwoAccounts
-	| destinationAccount originAccount |
-	originAccount := ReceptiveAccount new.
-	destinationAccount := ReceptiveAccount new.
 	
-	Transfer from: originAccount to: destinationAccount for: 10*peso.
+	Transfer from: anOriginAccount to: aDestinationAccount for: anAmountToTransfer.
 	
-	self assert: -10*peso equals: originAccount balance.
-	self assert: 10*peso equals: destinationAccount balance.
+	self assert: anAmountToTransfer negated equals: anOriginAccount balance.
+	self assert: anAmountToTransfer equals: aDestinationAccount balance.
 ! !
 
-!TransferTest methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:37:18'!
+!TransferTest methodsFor: 'test' stamp: 'RV 11/28/2021 22:33:56'!
 test02ReceptiveAccountsKnowsRegisteredTransferTransaction 
-
-	| destinationAccount originAccount transfer |
-	originAccount := ReceptiveAccount new.
-	destinationAccount := ReceptiveAccount new.
 	
-	transfer := Transfer from: originAccount to: destinationAccount for: 10*peso.
+	| transfer |
+	transfer := Transfer from: anOriginAccount to: aDestinationAccount for: anAmountToTransfer .
 	
-	self assert: (originAccount hasRegistered: transfer transferWithdraw).
-	self assert: (destinationAccount hasRegistered: transfer transferDeposit).! !
+	self assert: (anOriginAccount hasRegistered: transfer transferWithdraw).
+	self assert: (aDestinationAccount hasRegistered: transfer transferDeposit).! !
 
-!TransferTest methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:37:37'!
+!TransferTest methodsFor: 'test' stamp: 'RV 11/28/2021 22:33:56'!
 test03TransferKnowsItsValue
-	| destinationAccount originAccount transfer |
-	originAccount := ReceptiveAccount new.
-	destinationAccount := ReceptiveAccount new.
 	
-	transfer := Transfer from: originAccount to: destinationAccount for: 10*peso.
+	| transfer |
+	transfer := Transfer from: anOriginAccount to: aDestinationAccount for: anAmountToTransfer. 
 	
-	self assert: 10*peso equals: transfer transferValue.
+	self assert: anAmountToTransfer equals: transfer transferValue.
 ! !
 
-!TransferTest methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:38:49'!
+!TransferTest methodsFor: 'test' stamp: 'RV 11/28/2021 22:33:56'!
 test04BothPartsOfTheTransactionKnowsItsCounterpart
-	| destinationAccount originAccount transfer onePartOfTheTransfer otherPartOfTheTransfer |
-	originAccount := ReceptiveAccount new.
-	destinationAccount := ReceptiveAccount new.
 	
-	transfer := Transfer from: originAccount to: destinationAccount for: 10*peso.
+	| onePartOfTheTransfer otherPartOfTheTransfer transfer |
+	transfer := Transfer from: anOriginAccount to: aDestinationAccount for: anAmountToTransfer .
 	
 	onePartOfTheTransfer := transfer transferDeposit.
 	otherPartOfTheTransfer := transfer transferWithdraw.
 	
 	self assert: onePartOfTheTransfer counterpart equals: otherPartOfTheTransfer.
 	self assert: otherPartOfTheTransfer counterpart equals: onePartOfTheTransfer.! !
+
+!TransferTest methodsFor: 'test' stamp: 'RV 11/28/2021 22:37:57'!
+test05CantTranferNegativesAmount       
+	
+	self assertErrorMessageOnAnInvalidAmountToTransfer: aNegativeAmountToTransfer
+	
+	! !
+
+!TransferTest methodsFor: 'test' stamp: 'RV 11/28/2021 22:38:21'!
+test06CantTranferZeroAmount       
+	
+	self assertErrorMessageOnAnInvalidAmountToTransfer: anZeroAmountToTransfer
+	! !
+
+
+!TransferTest methodsFor: 'support' stamp: 'RV 11/28/2021 22:37:57'!
+assertErrorMessageOnAnInvalidAmountToTransfer: anInvalidAmount
+
+	^ self should: [
+		Transfer from: anOriginAccount to: aDestinationAccount for: anInvalidAmount.
+	] raise: Error withExceptionDo:[ :error |
+		self assert: Transfer errorAmountMessage equals: error messageText.	
+	]! !
 
 
 !classDefinition: #AccountTransaction category: 'ServiciosFinancieros-Ejercicio'!
@@ -262,14 +286,14 @@ Object subclass: #AccountTransaction
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!AccountTransaction methodsFor: 'value' stamp: 'AMV 11/24/2021 23:22:19'!
-value 
-	self subclassResponsibility ! !
-
-
 !AccountTransaction methodsFor: 'balance' stamp: 'RV 11/28/2021 18:31:25'!
 affectBalance: aSubtotalBalance
 	self subclassResponsibility.! !
+
+
+!AccountTransaction methodsFor: 'value asking' stamp: 'RV 11/28/2021 23:07:13'!
+wasTheAmountof: anAmountToCompare
+	^ value = anAmountToCompare! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -301,14 +325,10 @@ initializeFor: aValue
 	value := aValue ! !
 
 
-!CashierDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:17:29'!
+!CashierDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 23:08:22'!
 affectBalance: subtotalBalance
-	 ^subtotalBalance + self value
+	 ^subtotalBalance + value
 	! !
-
-!CashierDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:20:07'!
-value
-	^value copy! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -335,13 +355,9 @@ initializeFor: aValue
 	value := aValue ! !
 
 
-!CashierWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:18:10'!
+!CashierWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 23:07:59'!
 affectBalance: subtotalBalance
-	^ subtotalBalance - self value! !
-
-!CashierWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:20:19'!
-value
-	^value copy! !
+	^ subtotalBalance - value! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -373,13 +389,9 @@ counterpart
 	^transfer transferWithdraw ! !
 
 
-!TransferDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 19:33:36'!
+!TransferDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 23:08:33'!
 affectBalance: aSubtotalBalance
-	^aSubtotalBalance + self value! !
-
-!TransferDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:20:34'!
-value
-	^value copy! !
+	^aSubtotalBalance + value! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -420,13 +432,9 @@ counterpart
 	^transfer transferDeposit ! !
 
 
-!TransferWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:23:50'!
+!TransferWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 23:08:47'!
 affectBalance: aSubtotalBalance
-	^aSubtotalBalance - self value! !
-
-!TransferWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 18:20:54'!
-value
-	^value copy! !
+	^aSubtotalBalance - value! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -493,21 +501,28 @@ hasRegistered: aTransaction
 	]
 			! !
 
-!Portfolio methodsFor: 'financial asset' stamp: 'RV 11/28/2021 17:05:04'!
+!Portfolio methodsFor: 'financial asset' stamp: 'RV 11/28/2021 23:17:25'!
 transactions
-	| totalTransactions |
-	totalTransactions := OrderedCollection new.
-	financialAssets do:[ :eachFinancialAsset |
-		totalTransactions addAllLast: eachFinancialAsset transactions.
-		].
-	^totalTransactions copy.! !
+	^(self obtainAllTransactionsInThePortfolio) copy! !
 
 
-!Portfolio methodsFor: 'portfolio behaviour' stamp: 'RV 11/28/2021 19:12:28'!
+!Portfolio methodsFor: 'portfolio behaviour' stamp: 'RV 11/28/2021 23:10:55'!
 add: aFinancialAsset
-	"financial assets es activos financieros. Definicion de Portfolio : 	https://www.eleconomista.es/diccionario-de-economia/portfolio"
+	"financial assets es activos financieros en ingles.
+	Definicion de Portfolio : 	https://www.eleconomista.es/diccionario-de-economia/portfolio"
 	financialAssets add: aFinancialAsset
 	! !
+
+
+!Portfolio methodsFor: 'private' stamp: 'RV 11/28/2021 23:19:56'!
+appendToThe: subTotalOfTransactions transactionsOf: eachFinancialAsset
+	^ subTotalOfTransactions,eachFinancialAsset transactions! !
+
+!Portfolio methodsFor: 'private' stamp: 'RV 11/28/2021 23:22:03'!
+obtainAllTransactionsInThePortfolio
+	^ financialAssets inject: (OrderedCollection new) into: [ :subTotalOfTransactions :eachFinancialAsset |
+			self appendToThe: subTotalOfTransactions transactionsOf: eachFinancialAsset.
+		]! !
 
 
 !classDefinition: #ReceptiveAccount category: 'ServiciosFinancieros-Ejercicio'!
@@ -563,15 +578,15 @@ initializeTransferFrom: aNewDeposit to: aNewWithdraw for: anAmount
 	withdrawTransfer := aNewWithdraw.! !
 
 
-!Transfer methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:12:46'!
+!Transfer methodsFor: 'transfer' stamp: 'AMV 11/24/2021 23:12:46'!
 transferDeposit
 	^despositedTransfer! !
 
-!Transfer methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 22:32:09'!
+!Transfer methodsFor: 'transfer' stamp: 'AMV 11/24/2021 22:32:09'!
 transferValue
 	^transferAmount! !
 
-!Transfer methodsFor: 'as yet unclassified' stamp: 'AMV 11/24/2021 23:13:02'!
+!Transfer methodsFor: 'transfer' stamp: 'AMV 11/24/2021 23:13:02'!
 transferWithdraw
 	^withdrawTransfer! !
 
@@ -581,9 +596,16 @@ transferWithdraw
 Transfer class
 	instanceVariableNames: ''!
 
-!Transfer class methodsFor: 'instance creation' stamp: 'AMV 11/24/2021 23:09:06'!
+!Transfer class methodsFor: 'instance creation' stamp: 'RV 11/28/2021 22:29:54'!
+errorAmountMessage
+	^ 'El monto debe ser positivo'! !
+
+!Transfer class methodsFor: 'instance creation' stamp: 'RV 11/28/2021 22:41:44'!
 from: anOriginAccount to: aDestinationAccount for: anAmount
 	| aNewTransfer aNewDeposit aNewWithdraw |
+	
+	anAmount <= 0 ifTrue: [^self error: self errorAmountMessage].
+	
 	aNewTransfer := self new.
 	aNewWithdraw := TransferWithdraw register: anAmount on: anOriginAccount from: aNewTransfer.
 	aNewDeposit := TransferDeposit register: anAmount on: aDestinationAccount from: aNewTransfer.
