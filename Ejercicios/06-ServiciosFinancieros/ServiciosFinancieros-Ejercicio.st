@@ -256,6 +256,142 @@ assertThatThereisOnlyOneTransactionAndItWas: aDeposit
 	self assert: (anAccount transactions includes: aDeposit)! !
 
 
+!classDefinition: #ReportTest category: 'ServiciosFinancieros-Ejercicio'!
+TestCase subclass: #ReportTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'RV 11/29/2021 21:28:50'!
+test01ElReporteImprimeTodosLosDepositosDeUnaCuenta
+
+	| aReport anAccount |
+	anAccount := ReceptiveAccount new.
+	CashierDeposit register: 100 * peso on: anAccount.
+	CashierDeposit register: 200 * peso on: anAccount.
+
+	aReport := Report of: anAccount.
+	
+	self assert: (aReport getLine: 1) equals: 'Depósito por 100 pesos'.
+	self assert: (aReport getLine: 2) equals: 'Depósito por 200 pesos'.
+"
+	anAccount := ReceptiveAccount new.
+	otherAccount := ReceptiveAccount new.
+	anotherAccount := ReceptiveAccount  new.
+	
+	
+	CashierDeposit register: 100 * peso on: anAccount.
+	CashierWithdraw register: 10 * peso on:anAccount.
+	Transfer from:  otherAccount to: anAccount  for: 90* peso.
+	Transfer from: anAccount to: anotherAccount for: 100* peso. 
+	 
+	aReport := Report of: anAccount.
+	
+	self assert: (aReport getLine: 1) equals: 'Depósito por 100 pesos'.
+	self assert: (aReport getLine: 2) equals: 'Extracción por 50 pesos'.
+	self assert: (aReport getLine: 3) equals: 'Salida por transferencia de 20 pesos'.
+	self assert: (aReport getLine: 4) equals: 'Entrada por transferencia de 30 pesos'.
+	self aasert: (aReport getLine: 5) equals: 'Balance = 60 pesos'.
+	"
+	! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'RV 11/29/2021 21:36:08'!
+test02ElReporteImprimeTodasLasExtracionesDeUnaCuenta
+
+	| aReport anAccount |
+	anAccount := ReceptiveAccount new.
+	CashierWithdraw register: 50 * peso on: anAccount.
+	CashierWithdraw register: 100 * peso on: anAccount.
+
+	aReport := Report of: anAccount.
+	
+	self assert: (aReport getLine: 1) equals: 'Extracción por 50 pesos'.
+	self assert: (aReport getLine: 2) equals: 'Extracción por 100 pesos'.
+"
+	anAccount := ReceptiveAccount new.
+	otherAccount := ReceptiveAccount new.
+	anotherAccount := ReceptiveAccount  new.
+	
+	
+	CashierDeposit register: 100 * peso on: anAccount.
+	CashierWithdraw register: 10 * peso on:anAccount.
+	Transfer from:  otherAccount to: anAccount  for: 90* peso.
+	Transfer from: anAccount to: anotherAccount for: 100* peso. 
+	 
+	aReport := Report of: anAccount.
+	
+	self assert: (aReport getLine: 1) equals: 'Depósito por 100 pesos'.
+	self assert: (aReport getLine: 2) equals: 'Extracción por 50 pesos'.
+	self assert: (aReport getLine: 3) equals: 'Salida por transferencia de 20 pesos'.
+	self assert: (aReport getLine: 4) equals: 'Entrada por transferencia de 30 pesos'.
+	self aasert: (aReport getLine: 5) equals: 'Balance = 60 pesos'.
+	"
+	! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'RV 11/29/2021 21:40:09'!
+test03ElReporteImprimeTodasLasTransfenciasDeUnaCuenta
+
+	| aReport anAccount anotherAccount otherAccount |
+	anAccount := ReceptiveAccount new.
+	otherAccount := ReceptiveAccount new.
+	anotherAccount := ReceptiveAccount  new.
+	
+	Transfer from:  otherAccount to: anAccount  for: 100* peso.
+	Transfer from: anAccount to: anotherAccount for: 50* peso. 
+	 
+
+	aReport := Report of: anAccount.
+	
+	self assert: (aReport getLine: 1) equals: 'Entrada por transferencia de 100 pesos'.
+	self assert: (aReport getLine: 2) equals: 'Salida por transferencia de 50 pesos'.
+	
+"
+	anAccount := ReceptiveAccount new.
+	otherAccount := ReceptiveAccount new.
+	anotherAccount := ReceptiveAccount  new.
+	
+	
+	CashierDeposit register: 100 * peso on: anAccount.
+	CashierWithdraw register: 10 * peso on:anAccount.
+	Transfer from:  otherAccount to: anAccount  for: 90* peso.
+	Transfer from: anAccount to: anotherAccount for: 100* peso. 
+	 
+	aReport := Report of: anAccount.
+	
+	self assert: (aReport getLine: 1) equals: 'Depósito por 100 pesos'.
+	self assert: (aReport getLine: 2) equals: 'Extracción por 50 pesos'.
+	self assert: (aReport getLine: 3) equals: 'Salida por transferencia de 20 pesos'.
+	self assert: (aReport getLine: 4) equals: 'Entrada por transferencia de 30 pesos'.
+	self aasert: (aReport getLine: 5) equals: 'Balance = 60 pesos'.
+	"
+	! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'RV 11/29/2021 21:44:54'!
+test04ElReporteImprimeTodasLasTransaccionesDeUnaCuentaYFinalizaConElBalance
+
+	| aReport anAccount anotherAccount otherAccount |
+	anAccount := ReceptiveAccount new.
+	otherAccount := ReceptiveAccount new.
+	anotherAccount := ReceptiveAccount  new.
+	
+	
+	CashierDeposit register: 100 * peso on: anAccount.
+	CashierWithdraw register: 50 * peso on:anAccount.
+	Transfer from: anAccount to: anotherAccount for: 20* peso. 
+	Transfer from:  otherAccount to: anAccount  for: 30* peso.
+	 
+	aReport := Report of: anAccount.
+	
+	self assert: (aReport getLine: 1) equals: 'Depósito por 100 pesos'.
+	self assert: (aReport getLine: 2) equals: 'Extracción por 50 pesos'.
+	self assert: (aReport getLine: 3) equals: 'Salida por transferencia de 20 pesos'.
+	self assert: (aReport getLine: 4) equals: 'Entrada por transferencia de 30 pesos'.
+	self assert: (aReport getLine: 5) equals: 'Balance = 60 pesos'.
+
+	! !
+
+
 !classDefinition: #TransferTest category: 'ServiciosFinancieros-Ejercicio'!
 TestCase subclass: #TransferTest
 	instanceVariableNames: 'anOriginAccount aDestinationAccount anAmountToTransfer aNegativeAmountToTransfer anZeroAmountToTransfer'
@@ -349,6 +485,10 @@ Object subclass: #AccountTransaction
 affectBalance: aSubtotalBalance
 	self subclassResponsibility.! !
 
+
+!AccountTransaction methodsFor: 'value asking' stamp: 'RV 11/29/2021 21:33:53'!
+value
+	^value copy! !
 
 !AccountTransaction methodsFor: 'value asking' stamp: 'RV 11/28/2021 23:07:13'!
 wasTheAmountof: anAmountToCompare
@@ -731,6 +871,49 @@ containsAnyOfTheFinancialAssetsOf: anotherPortfolio
 !ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AMV 11/29/2021 12:07:03'!
 from: containerFinancialAsset
 	containedByFinancialAsset := containerFinancialAsset ! !
+
+
+!classDefinition: #Report category: 'ServiciosFinancieros-Ejercicio'!
+Object subclass: #Report
+	instanceVariableNames: 'receptiveAccount text'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!Report methodsFor: 'initialization' stamp: 'RV 11/29/2021 21:45:55'!
+initializeOf: aReceptiveAccount 
+	receptiveAccount := aReceptiveAccount.
+	text := Dictionary new.! !
+
+
+!Report methodsFor: 'as yet unclassified' stamp: 'RV 11/29/2021 21:49:31'!
+getLine: lineToPrint
+	receptiveAccount transactions do:[ :transaction |
+		(transaction class = CashierDeposit) ifTrue:[
+			^'Depósito por ', (transaction value) asString
+			].
+		(transaction class = CashierWithdraw ) ifTrue:[
+			^'Extracción por ', (transaction value) asString
+			].
+		(transaction class = TransferDeposit ) ifTrue:[
+			^'Entrada por transferencia de ', (transaction value) asString
+			].
+		(transaction class = TransferWithdraw ) ifTrue:[
+			^'Salida por transferencia de ', (transaction value) asString
+			].
+	]
+	transaction balance asString
+		! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Report class' category: 'ServiciosFinancieros-Ejercicio'!
+Report class
+	instanceVariableNames: ''!
+
+!Report class methodsFor: 'instance creation' stamp: 'RV 11/29/2021 21:23:08'!
+of: aReceptiveAccount 
+	^self new initializeOf: aReceptiveAccount ! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Ejercicio'!
