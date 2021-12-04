@@ -263,25 +263,73 @@ TestCase subclass: #ReportTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'AMV 12/1/2021 20:09:15'!
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'RV 12/2/2021 22:28:13'!
 test01
 
 	| anAccount expectedAccountSummary |
 	anAccount := ReceptiveAccount new.
 	expectedAccountSummary := OrderedCollection with: 'Balance = 0 pesos'.
 	
-	self assert: anAccount accountSummary equals: expectedAccountSummary.! !
+	self assert: anAccount summary equals: expectedAccountSummary.! !
 
-!ReportTest methodsFor: 'as yet unclassified' stamp: 'AMV 12/1/2021 20:30:08'!
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'RV 12/2/2021 22:28:12'!
 test02
+	| anAccount expectedAccountSummary  |
+
+	anAccount := ReceptiveAccount new.
+	
+	CashierDeposit register: 100 * peso on: anAccount.
+	
+	expectedAccountSummary := OrderedCollection 
+		with: 'Depósito por 100 pesos'
+		with: 'Balance = 100 pesos'.
+	
+	self assert: anAccount summary equals: expectedAccountSummary
+! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'RV 12/2/2021 22:28:12'!
+test03
+	| anAccount expectedAccountSummary |
+	anAccount := ReceptiveAccount new.
+	
+
+	CashierWithdraw register: 50 * peso on: anAccount.
+	
+	expectedAccountSummary := OrderedCollection 
+		with: 'Extracción por 50 pesos'
+		with: 'Balance = -50 pesos'.
+	
+	self assert: anAccount summary equals: expectedAccountSummary
+! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'RV 12/2/2021 22:28:13'!
+test04
 	| anAccount expectedAccountSummary anotherAccount |
 	anotherAccount := ReceptiveAccount new.
 	anAccount := ReceptiveAccount new.
+
+	Transfer from: anAccount to: anotherAccount for: 20 * peso.
+	
+	expectedAccountSummary := OrderedCollection 
+		with: 'Salida por transferencia de 20 pesos'
+		with: 'Balance = -20 pesos'.
+	
+	self assert: anAccount summary equals: expectedAccountSummary
+! !
+
+!ReportTest methodsFor: 'as yet unclassified' stamp: 'RV 12/2/2021 22:46:56'!
+test06
+	| anAccount expectedAccountSummary anotherAccount aPortfolio |
+	anotherAccount := ReceptiveAccount new.
+	anAccount := ReceptiveAccount new.
+	aPortfolio := Portfolio new.  
 	
 	CashierDeposit register: 100 * peso on: anAccount.
 	CashierWithdraw register: 50 * peso on: anAccount.
 	Transfer from: anAccount to: anotherAccount for: 20 * peso.
 	Transfer from: anotherAccount to: anAccount for: 30 * peso.
+	
+	aPortfolio add: anAccount.
 	
 	expectedAccountSummary := OrderedCollection 
 		with: 'Depósito por 100 pesos'
@@ -290,7 +338,23 @@ test02
 		with: 'Entrada por transferencia de 30 pesos'
 		with: 'Balance = 60 pesos'.
 	
-	self assert: anAccount accountSummary equals: expectedAccountSummary
+	self assert: aPortfolio summary equals: expectedAccountSummary
+! !
+
+
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/2/2021 22:47:15'!
+test05
+	| anAccount expectedAccountSummary anotherAccount |
+	anotherAccount := ReceptiveAccount new.
+	anAccount := ReceptiveAccount new.
+	
+	Transfer from: anotherAccount to: anAccount for: 30 * peso.
+	
+	expectedAccountSummary := OrderedCollection 
+		with: 'Entrada por transferencia de 30 pesos'
+		with: 'Balance = 30 pesos'.
+	
+	self assert: anAccount summary equals: expectedAccountSummary
 ! !
 
 
@@ -717,6 +781,17 @@ myContainerFinanceAssetAlreadyContains: aFinancialAsset
 	^ containedByFinancialAsset anySatisfy: [ :aContainerFinancialAsset | 
 		aContainerFinancialAsset iAmAlreadyContaining: aFinancialAsset]! !
 
+
+!Portfolio methodsFor: 'as yet unclassified' stamp: 'RV 12/2/2021 22:43:12'!
+summary
+	| thisPortfolioSummary |
+	thisPortfolioSummary := OrderedCollection new.
+	
+	financialAssets do: [:eachFinancialAsset |
+		thisPortfolioSummary addAllLast: eachFinancialAsset summary.
+		].	
+	^thisPortfolioSummary! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'Portfolio class' category: 'ServiciosFinancieros-Ejercicio'!
@@ -786,8 +861,16 @@ isincludedOnAPortfolio: aPortfolio
 	! !
 
 
-!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AMV 12/1/2021 20:41:16'!
-accountSummary
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AMV 11/29/2021 12:28:23'!
+containsAnyOfTheFinancialAssetsOf: anotherPortfolio
+	^false! !
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AMV 11/29/2021 12:07:03'!
+from: containerFinancialAsset
+	containedByFinancialAsset := containerFinancialAsset ! !
+
+!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'RV 12/2/2021 22:28:12'!
+summary
 	| thisAccountSummary |
 	thisAccountSummary := OrderedCollection new.
 	
@@ -797,14 +880,6 @@ accountSummary
 	
 	thisAccountSummary add: ('Balance = ',(self balance) asString) .
 	^thisAccountSummary! !
-
-!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AMV 11/29/2021 12:28:23'!
-containsAnyOfTheFinancialAssetsOf: anotherPortfolio
-	^false! !
-
-!ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AMV 11/29/2021 12:07:03'!
-from: containerFinancialAsset
-	containedByFinancialAsset := containerFinancialAsset ! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Ejercicio'!
