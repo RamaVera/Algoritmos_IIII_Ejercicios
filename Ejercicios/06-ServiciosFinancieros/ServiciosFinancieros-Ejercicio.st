@@ -173,15 +173,6 @@ TestCase subclass: #ReceptiveAccountTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!ReceptiveAccountTest methodsFor: 'setup' stamp: 'RV 11/28/2021 22:46:43'!
-setUp
-	anAccount := ReceptiveAccount new.
-	
-	anAmountOfZero := 0*peso.
-	anAmountOf50  := 50 * peso.
-	anAmountOf100 := 100*peso.! !
-
-
 !ReceptiveAccountTest methodsFor: 'tests' stamp: 'RV 11/28/2021 22:45:25'!
 test01ReceptiveAccountHaveZeroAsBalanceWhenCreated 
 	self assert: anAmountOfZero equals: anAccount balance
@@ -249,11 +240,194 @@ test07AccountKnowsItsTransactions
 	self assertThatThereisOnlyOneTransactionAndItWas: aDeposit.! !
 
 
+!ReceptiveAccountTest methodsFor: 'setup' stamp: 'RV 11/28/2021 22:46:43'!
+setUp
+	anAccount := ReceptiveAccount new.
+	
+	anAmountOfZero := 0*peso.
+	anAmountOf50  := 50 * peso.
+	anAmountOf100 := 100*peso.! !
+
+
 !ReceptiveAccountTest methodsFor: 'support' stamp: 'RV 11/29/2021 02:21:07'!
 assertThatThereisOnlyOneTransactionAndItWas: aDeposit
 
 	self assert: 1 equals: anAccount transactions size.
 	self assert: (anAccount transactions includes: aDeposit)! !
+
+
+!classDefinition: #ReportTest category: 'ServiciosFinancieros-Ejercicio'!
+TestCase subclass: #ReportTest
+	instanceVariableNames: 'anAccount anAccountToTransfer expectedAccountSummary aPortfolio otherPortfolio'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!ReportTest methodsFor: 'setUp' stamp: 'RV 12/6/2021 18:49:17'!
+setUp
+	anAccount := ReceptiveAccount new.
+	anAccountToTransfer := ReceptiveAccount new.
+	expectedAccountSummary := OrderedCollection new.
+
+	aPortfolio := Portfolio new.
+	otherPortfolio := Portfolio new.! !
+
+
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:27'!
+test01ASummaryGivesACorrectSummaryReportOfAReceptiveAccountWithNoTransactions
+
+	expectedAccountSummary 
+		add: 'Balance = 0 pesos'.
+	
+	self assert: (Summary of: anAccount ) equals: expectedAccountSummary.! !
+
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:02'!
+test02ASummaryGivesACorrectSummaryReportOfAReceptiveAccountWithOnlyACashierDeposit
+	
+	
+	CashierDeposit register: 100 * peso on: anAccount .
+	
+	expectedAccountSummary 
+		add: 'Depósito por 100 pesos';
+		add: 'Balance = 100 pesos'.
+	
+	self assert: (Summary of: anAccount ) equals: expectedAccountSummary
+! !
+
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:02'!
+test03ASummaryGivesACorrectSummaryReportOfAReceptiveAccountWithOnlyACashierWithdraw
+		
+
+	CashierWithdraw register: 50 * peso on: anAccount .
+	
+	expectedAccountSummary 
+		add: 'Extracción por 50 pesos';
+		add: 'Balance = -50 pesos'.
+	
+	self assert: (Summary of: anAccount ) equals: expectedAccountSummary
+! !
+
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:02'!
+test04ASummaryGivesACorrectSummaryReportOfAReceptiveAccountWithOnlyATransferWithdraw
+	
+	Transfer from: anAccount to: anAccountToTransfer for: 20 * peso.
+	
+	expectedAccountSummary
+		add: 'Salida por transferencia de 20 pesos';
+		add: 'Balance = -20 pesos'.
+	
+	self assert: (Summary of: anAccount ) equals: expectedAccountSummary
+! !
+
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:02'!
+test05ASummaryGivesACorrectSummaryReportOfAReceptiveAccountWithOnlyATransferDeposit
+	
+	
+	Transfer from: anAccountToTransfer to: anAccount for: 30 * peso.
+	
+	expectedAccountSummary 
+		add: 'Entrada por transferencia de 30 pesos';
+		add: 'Balance = 30 pesos'.
+	
+	self assert: (Summary of: anAccount ) equals: expectedAccountSummary
+! !
+
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:09'!
+test06ASummaryGivesACorrectSummaryReportOfAPortfolioWithVoriousAccounts
+	
+	CashierDeposit register: 100 * peso on: anAccount .
+	CashierWithdraw register: 50 * peso on: anAccount .
+	Transfer from: anAccount to: anAccountToTransfer for: 20 * peso.
+	
+	Transfer from: anAccountToTransfer to: anAccount for: 30 * peso.
+	CashierDeposit register: 100 * peso on: anAccountToTransfer .
+
+	aPortfolio add: anAccount .
+	aPortfolio add: anAccountToTransfer .
+	
+	expectedAccountSummary
+		add: 'Depósito por 100 pesos';
+		add: 'Extracción por 50 pesos';
+		add: 'Salida por transferencia de 20 pesos';
+		add: 'Entrada por transferencia de 30 pesos';
+		add: 'Entrada por transferencia de 20 pesos';
+		add: 'Salida por transferencia de 30 pesos' ;
+		add: 'Depósito por 100 pesos';
+		add: 'Balance = 150 pesos'.
+	
+	self assert: (Summary of: aPortfolio ) equals: expectedAccountSummary
+! !
+
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:41:38'!
+test07ASummaryGivesACorrectSummaryReportOfAPortfolioInsideAPortfolio
+	
+	CashierDeposit register: 100 * peso on: anAccount .
+	CashierWithdraw register: 50 * peso on: anAccount .
+	Transfer from: anAccount to: anAccountToTransfer for: 20 * peso.
+	Transfer from: anAccountToTransfer to: anAccount for: 30 * peso.
+	
+	aPortfolio add: anAccount .
+	otherPortfolio add: aPortfolio .
+	
+	expectedAccountSummary 
+		add: 'Depósito por 100 pesos';
+		add:  'Extracción por 50 pesos';
+		add:  'Salida por transferencia de 20 pesos';
+		add:  'Entrada por transferencia de 30 pesos';
+		add:  'Balance = 60 pesos'.
+	
+	self assert: (Summary of: otherPortfolio) equals: expectedAccountSummary
+! !
+
+
+!ReportTest methodsFor: 'transfer net' stamp: 'RV 12/6/2021 18:39:50'!
+test08ATransferNetGivesACorrectTransferNetReportOfAReceptiveAccountWithNoTransactions
+	
+	self assert: (TransferNet of: anAccount ) equals: 'Transfer Net balance = 0 pesos' .! !
+
+!ReportTest methodsFor: 'transfer net' stamp: 'RV 12/6/2021 18:39:51'!
+test09TransferNetGivesACorrectTransferNetReportOfAReceptiveAccountWithNoTransfers
+	
+	CashierDeposit register: 20 *peso  on: anAccount .
+	CashierWithdraw register: 5 * peso on: anAccount .
+	
+	self assert: (TransferNet of: anAccount ) equals: 'Transfer Net balance = 0 pesos' .! !
+
+!ReportTest methodsFor: 'transfer net' stamp: 'RV 12/6/2021 18:39:51'!
+test10TransferNetGivesACorrectTransferNetReportOfAReceptiveAccountWithOnlyATransferDeposit
+	
+	Transfer from: anAccountToTransfer to: anAccount for: 20 * peso.
+	
+	self assert: (TransferNet of: anAccount ) equals: 'Transfer Net balance = 20 pesos' .! !
+
+!ReportTest methodsFor: 'transfer net' stamp: 'RV 12/6/2021 18:40:09'!
+test11TransferNetGivesACorrectTransferNetReportOfAPortfolioWithOneReceptiveAccount
+		
+	CashierDeposit register: 100 * peso on: anAccount .
+	CashierWithdraw register: 50 * peso on: anAccount .
+	Transfer from: anAccount to: anAccountToTransfer for: 20 * peso.
+	Transfer from: anAccountToTransfer to: anAccount for: 30 * peso.
+	
+	aPortfolio add: anAccount .
+	
+	self assert: (TransferNet of: aPortfolio ) equals: 'Transfer Net balance = 10 pesos' 
+! !
+
+!ReportTest methodsFor: 'transfer net' stamp: 'RV 12/6/2021 18:40:09'!
+test12TransferNetGivesACorrectTransferNetReportOfAPortfolioWithVariousAccounts
+		
+	CashierDeposit register: 100 * peso on: anAccount .
+	CashierWithdraw register: 50 * peso on: anAccount .
+	Transfer from: anAccount to: anAccountToTransfer for: 20 * peso.
+	
+	Transfer from: anAccountToTransfer to: anAccount for: 30 * peso.
+	CashierDeposit register: 100 * peso on: anAccountToTransfer .
+
+	aPortfolio add: anAccount .
+	aPortfolio add: anAccountToTransfer .
+	
+	self assert: (TransferNet of: aPortfolio ) equals: 'Transfer Net balance = 0 pesos' 
+! !
 
 
 !classDefinition: #TransferTest category: 'ServiciosFinancieros-Ejercicio'!
@@ -350,6 +524,10 @@ affectBalance: aSubtotalBalance
 	self subclassResponsibility.! !
 
 
+!AccountTransaction methodsFor: 'value asking' stamp: 'RV 11/29/2021 21:33:53'!
+value
+	^value copy! !
+
 !AccountTransaction methodsFor: 'value asking' stamp: 'RV 11/28/2021 23:07:13'!
 wasTheAmountof: anAmountToCompare
 	^ value = anAmountToCompare! !
@@ -389,6 +567,11 @@ affectBalance: subtotalBalance
 	 ^subtotalBalance + value
 	! !
 
+
+!CashierDeposit methodsFor: 'as yet unclassified' stamp: 'AMV 12/4/2021 19:36:35'!
+accept: anExpressionVisitor
+	^anExpressionVisitor visitCashierDeposit: self! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 !classDefinition: 'CashierDeposit class' category: 'ServiciosFinancieros-Ejercicio'!
@@ -417,6 +600,11 @@ initializeFor: aValue
 !CashierWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 23:07:59'!
 affectBalance: subtotalBalance
 	^ subtotalBalance - value! !
+
+
+!CashierWithdraw methodsFor: 'as yet unclassified' stamp: 'AMV 12/4/2021 19:37:02'!
+accept: anExpressionVisitor
+	^anExpressionVisitor visitCashierWithdraw: self! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -451,6 +639,11 @@ counterpart
 !TransferDeposit methodsFor: 'account transaction' stamp: 'RV 11/28/2021 23:08:33'!
 affectBalance: aSubtotalBalance
 	^aSubtotalBalance + value! !
+
+
+!TransferDeposit methodsFor: 'as yet unclassified' stamp: 'AMV 12/4/2021 19:37:47'!
+accept: anExpressionVisitor
+	^anExpressionVisitor visitTransferDeposit: self! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -494,6 +687,11 @@ counterpart
 !TransferWithdraw methodsFor: 'account transaction' stamp: 'RV 11/28/2021 23:08:47'!
 affectBalance: aSubtotalBalance
 	^aSubtotalBalance - value! !
+
+
+!TransferWithdraw methodsFor: 'as yet unclassified' stamp: 'AMV 12/4/2021 19:38:06'!
+accept: anExpressionVisitor
+	^anExpressionVisitor visitTransferWithdraw: self! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -731,6 +929,122 @@ containsAnyOfTheFinancialAssetsOf: anotherPortfolio
 !ReceptiveAccount methodsFor: 'as yet unclassified' stamp: 'AMV 11/29/2021 12:07:03'!
 from: containerFinancialAsset
 	containedByFinancialAsset := containerFinancialAsset ! !
+
+
+!classDefinition: #FinancialVisitors category: 'ServiciosFinancieros-Ejercicio'!
+Object subclass: #FinancialVisitors
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!FinancialVisitors methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 11:21:52'!
+visitCashierDeposit: aCashierDeposit
+	self subclassResponsibility ! !
+
+!FinancialVisitors methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 11:21:34'!
+visitCashierWithdraw: aCashierWithdraw
+	self subclassResponsibility ! !
+
+!FinancialVisitors methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 11:21:11'!
+visitTransferDeposit: aTransferDeposit
+	self subclassResponsibility ! !
+
+!FinancialVisitors methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 11:20:47'!
+visitTransferWithdraw: aTransferWithdraw
+	self subclassResponsibility ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'FinancialVisitors class' category: 'ServiciosFinancieros-Ejercicio'!
+FinancialVisitors class
+	instanceVariableNames: ''!
+
+!FinancialVisitors class methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 11:22:26'!
+of: aFinancialAsset
+	self subclassResponsibility ! !
+
+
+!classDefinition: #Summary category: 'ServiciosFinancieros-Ejercicio'!
+FinancialVisitors subclass: #Summary
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!Summary methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 09:51:44'!
+visitCashierDeposit: aCashierDeposit
+	^'Depósito por ',(aCashierDeposit value) asString ! !
+
+!Summary methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 09:51:52'!
+visitCashierWithdraw: aCashierWithdraw
+	^'Extracción por ',(aCashierWithdraw value) asString ! !
+
+!Summary methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 09:51:59'!
+visitTransferDeposit: aTransferDeposit
+	^'Entrada por transferencia de ',(aTransferDeposit value) asString ! !
+
+!Summary methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 10:04:36'!
+visitTransferWithdraw: aTransferWithdraw
+	^'Salida por transferencia de ',(aTransferWithdraw value) asString ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Summary class' category: 'ServiciosFinancieros-Ejercicio'!
+Summary class
+	instanceVariableNames: ''!
+
+!Summary class methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 10:58:56'!
+of: aFinancialAsset
+	| aSummary report |
+	aSummary _ self new .
+	report _ OrderedCollection new .
+	aFinancialAsset transactions do: [ :eachTransaction |
+		report add: (eachTransaction accept: aSummary)
+		] .
+	
+	report add: 'Balance = ' , (aFinancialAsset balance) asString .
+	^report! !
+
+
+!classDefinition: #TransferNet category: 'ServiciosFinancieros-Ejercicio'!
+FinancialVisitors subclass: #TransferNet
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'ServiciosFinancieros-Ejercicio'!
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 11:47:08'!
+visitCashierDeposit: aCashierDeposit
+	^0 * peso! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 11:47:15'!
+visitCashierWithdraw: aCashierWithdraw
+	^0 * peso! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 11:42:22'!
+visitTransferDeposit: aTransferDeposit
+	^aTransferDeposit value! !
+
+!TransferNet methodsFor: 'as yet unclassified' stamp: 'AMV 12/5/2021 11:42:36'!
+visitTransferWithdraw: aTransferWithdraw
+	^aTransferWithdraw value negated ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'TransferNet class' category: 'ServiciosFinancieros-Ejercicio'!
+TransferNet class
+	instanceVariableNames: ''!
+
+!TransferNet class methodsFor: 'instance creation' stamp: 'Rv 12/6/2021 14:59:44'!
+of: aFinancialAsset 
+	| aTransferNet  totalBalance|
+	aTransferNet _ self new .
+	totalBalance := aFinancialAsset transactions inject: 0*peso into: [:transferBalance :eachTransaction | 
+		transferBalance + (		eachTransaction accept: aTransferNet)
+		] .
+	
+	^'Transfer Net balance = ' , (totalBalance) asString .! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Ejercicio'!
