@@ -5,7 +5,6 @@ TestCase subclass: #PortfolioTest
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-
 !PortfolioTest methodsFor: 'setup' stamp: 'RV 11/28/2021 17:02:53'!
 setUp
 	aPortfolio := 	Portfolio new.
@@ -259,206 +258,175 @@ assertThatThereisOnlyOneTransactionAndItWas: aDeposit
 
 !classDefinition: #ReportTest category: 'ServiciosFinancieros-Ejercicio'!
 TestCase subclass: #ReportTest
-	instanceVariableNames: ''
+	instanceVariableNames: 'anAccount anAccountToTransfer expectedAccountSummary aPortfolio otherPortfolio'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
 
-!ReportTest methodsFor: 'summary' stamp: 'Rv 12/6/2021 14:48:27'!
+!ReportTest methodsFor: 'setUp' stamp: 'RV 12/6/2021 18:49:17'!
+setUp
+	anAccount := ReceptiveAccount new.
+	anAccountToTransfer := ReceptiveAccount new.
+	expectedAccountSummary := OrderedCollection new.
+
+	aPortfolio := Portfolio new.
+	otherPortfolio := Portfolio new.! !
+
+
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:27'!
 test01ASummaryGivesACorrectSummaryReportOfAReceptiveAccountWithNoTransactions
 
-	| anAccount expectedAccountSummary |
-	anAccount := ReceptiveAccount new.
-	expectedAccountSummary := OrderedCollection with: 'Balance = 0 pesos'.
+	expectedAccountSummary 
+		add: 'Balance = 0 pesos'.
 	
-	self assert: (Summary of: anAccount) equals: expectedAccountSummary.! !
+	self assert: (Summary of: anAccount ) equals: expectedAccountSummary.! !
 
-!ReportTest methodsFor: 'summary' stamp: 'AMV 12/5/2021 17:08:05'!
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:02'!
 test02ASummaryGivesACorrectSummaryReportOfAReceptiveAccountWithOnlyACashierDeposit
-	| anAccount expectedAccountSummary  |
-
-	anAccount := ReceptiveAccount new.
 	
-	CashierDeposit register: 100 * peso on: anAccount.
 	
-	expectedAccountSummary := OrderedCollection 
-		with: 'Depósito por 100 pesos'
-		with: 'Balance = 100 pesos'.
+	CashierDeposit register: 100 * peso on: anAccount .
 	
-	self assert: (Summary of: anAccount) equals: expectedAccountSummary
+	expectedAccountSummary 
+		add: 'Depósito por 100 pesos';
+		add: 'Balance = 100 pesos'.
+	
+	self assert: (Summary of: anAccount ) equals: expectedAccountSummary
 ! !
 
-!ReportTest methodsFor: 'summary' stamp: 'AMV 12/5/2021 17:09:05'!
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:02'!
 test03ASummaryGivesACorrectSummaryReportOfAReceptiveAccountWithOnlyACashierWithdraw
-	| anAccount expectedAccountSummary |
-	anAccount := ReceptiveAccount new.
-	
+		
 
-	CashierWithdraw register: 50 * peso on: anAccount.
+	CashierWithdraw register: 50 * peso on: anAccount .
 	
-	expectedAccountSummary := OrderedCollection 
-		with: 'Extracción por 50 pesos'
-		with: 'Balance = -50 pesos'.
+	expectedAccountSummary 
+		add: 'Extracción por 50 pesos';
+		add: 'Balance = -50 pesos'.
 	
-	self assert: (Summary of: anAccount) equals: expectedAccountSummary
+	self assert: (Summary of: anAccount ) equals: expectedAccountSummary
 ! !
 
-!ReportTest methodsFor: 'summary' stamp: 'AMV 12/5/2021 17:10:08'!
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:02'!
 test04ASummaryGivesACorrectSummaryReportOfAReceptiveAccountWithOnlyATransferWithdraw
-	| anAccount expectedAccountSummary anotherAccount |
-	anotherAccount := ReceptiveAccount new.
-	anAccount := ReceptiveAccount new.
-
-	Transfer from: anAccount to: anotherAccount for: 20 * peso.
 	
-	expectedAccountSummary := OrderedCollection 
-		with: 'Salida por transferencia de 20 pesos'
-		with: 'Balance = -20 pesos'.
+	Transfer from: anAccount to: anAccountToTransfer for: 20 * peso.
 	
-	self assert: (Summary of: anAccount) equals: expectedAccountSummary
+	expectedAccountSummary
+		add: 'Salida por transferencia de 20 pesos';
+		add: 'Balance = -20 pesos'.
+	
+	self assert: (Summary of: anAccount ) equals: expectedAccountSummary
 ! !
 
-!ReportTest methodsFor: 'summary' stamp: 'AMV 12/5/2021 17:10:26'!
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:02'!
 test05ASummaryGivesACorrectSummaryReportOfAReceptiveAccountWithOnlyATransferDeposit
-	| anAccount expectedAccountSummary anotherAccount |
-	anotherAccount := ReceptiveAccount new.
-	anAccount := ReceptiveAccount new.
 	
-	Transfer from: anotherAccount to: anAccount for: 30 * peso.
 	
-	expectedAccountSummary := OrderedCollection 
-		with: 'Entrada por transferencia de 30 pesos'
-		with: 'Balance = 30 pesos'.
+	Transfer from: anAccountToTransfer to: anAccount for: 30 * peso.
 	
-	self assert: (Summary of: anAccount) equals: expectedAccountSummary
+	expectedAccountSummary 
+		add: 'Entrada por transferencia de 30 pesos';
+		add: 'Balance = 30 pesos'.
+	
+	self assert: (Summary of: anAccount ) equals: expectedAccountSummary
 ! !
 
-!ReportTest methodsFor: 'summary' stamp: 'AMV 12/5/2021 17:25:45'!
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:40:09'!
 test06ASummaryGivesACorrectSummaryReportOfAPortfolioWithVoriousAccounts
-	| anAccount expectedAccountSummary anotherAccount aPortfolio |
-	anotherAccount := ReceptiveAccount new.
-	anAccount := ReceptiveAccount new.
-	aPortfolio := Portfolio new.  
 	
-	CashierDeposit register: 100 * peso on: anAccount.
-	CashierWithdraw register: 50 * peso on: anAccount.
-	Transfer from: anAccount to: anotherAccount for: 20 * peso.
+	CashierDeposit register: 100 * peso on: anAccount .
+	CashierWithdraw register: 50 * peso on: anAccount .
+	Transfer from: anAccount to: anAccountToTransfer for: 20 * peso.
 	
-	Transfer from: anotherAccount to: anAccount for: 30 * peso.
-	CashierDeposit register: 100 * peso on: anotherAccount .
+	Transfer from: anAccountToTransfer to: anAccount for: 30 * peso.
+	CashierDeposit register: 100 * peso on: anAccountToTransfer .
 
-	aPortfolio add: anAccount.
-	aPortfolio add: anotherAccount .
-	
-	expectedAccountSummary := OrderedCollection 
-		with: 'Depósito por 100 pesos'
-		with: 'Extracción por 50 pesos'
-		with: 'Salida por transferencia de 20 pesos'
-		with: 'Entrada por transferencia de 30 pesos'
-		with: 'Entrada por transferencia de 20 pesos'
-		with: 'Salida por transferencia de 30 pesos' .
+	aPortfolio add: anAccount .
+	aPortfolio add: anAccountToTransfer .
 	
 	expectedAccountSummary
 		add: 'Depósito por 100 pesos';
+		add: 'Extracción por 50 pesos';
+		add: 'Salida por transferencia de 20 pesos';
+		add: 'Entrada por transferencia de 30 pesos';
+		add: 'Entrada por transferencia de 20 pesos';
+		add: 'Salida por transferencia de 30 pesos' ;
+		add: 'Depósito por 100 pesos';
 		add: 'Balance = 150 pesos'.
-		
 	
-	
-	self assert: (Summary of: aPortfolio) equals: expectedAccountSummary
+	self assert: (Summary of: aPortfolio ) equals: expectedAccountSummary
 ! !
 
-!ReportTest methodsFor: 'summary' stamp: 'AMV 12/5/2021 17:12:06'!
+!ReportTest methodsFor: 'summary' stamp: 'RV 12/6/2021 18:41:38'!
 test07ASummaryGivesACorrectSummaryReportOfAPortfolioInsideAPortfolio
-	| anAccount expectedAccountSummary anotherAccount aPortfolio anotherPorfolio |
-	anotherAccount := ReceptiveAccount new.
-	anAccount := ReceptiveAccount new.
-	aPortfolio := Portfolio new.  	
-	anotherPorfolio := Portfolio new.  
 	
-	CashierDeposit register: 100 * peso on: anAccount.
-	CashierWithdraw register: 50 * peso on: anAccount.
-	Transfer from: anAccount to: anotherAccount for: 20 * peso.
-	Transfer from: anotherAccount to: anAccount for: 30 * peso.
+	CashierDeposit register: 100 * peso on: anAccount .
+	CashierWithdraw register: 50 * peso on: anAccount .
+	Transfer from: anAccount to: anAccountToTransfer for: 20 * peso.
+	Transfer from: anAccountToTransfer to: anAccount for: 30 * peso.
 	
-	aPortfolio add: anAccount.
-	anotherPorfolio add: aPortfolio.
+	aPortfolio add: anAccount .
+	otherPortfolio add: aPortfolio .
 	
-	expectedAccountSummary := OrderedCollection 
-		with: 'Depósito por 100 pesos'
-		with: 'Extracción por 50 pesos'
-		with: 'Salida por transferencia de 20 pesos'
-		with: 'Entrada por transferencia de 30 pesos'
-		with: 'Balance = 60 pesos'.
+	expectedAccountSummary 
+		add: 'Depósito por 100 pesos';
+		add:  'Extracción por 50 pesos';
+		add:  'Salida por transferencia de 20 pesos';
+		add:  'Entrada por transferencia de 30 pesos';
+		add:  'Balance = 60 pesos'.
 	
-	self assert: (Summary of: anotherPorfolio) equals: expectedAccountSummary
+	self assert: (Summary of: otherPortfolio) equals: expectedAccountSummary
 ! !
 
 
-!ReportTest methodsFor: 'transfer net' stamp: 'AMV 12/5/2021 17:13:04'!
+!ReportTest methodsFor: 'transfer net' stamp: 'RV 12/6/2021 18:39:50'!
 test08ATransferNetGivesACorrectTransferNetReportOfAReceptiveAccountWithNoTransactions
-	
-	| anAccount |
-	anAccount _ ReceptiveAccount new .
 	
 	self assert: (TransferNet of: anAccount ) equals: 'Transfer Net balance = 0 pesos' .! !
 
-!ReportTest methodsFor: 'transfer net' stamp: 'AMV 12/5/2021 17:13:53'!
+!ReportTest methodsFor: 'transfer net' stamp: 'RV 12/6/2021 18:39:51'!
 test09TransferNetGivesACorrectTransferNetReportOfAReceptiveAccountWithNoTransfers
 	
-	| anAccount |
-	anAccount _ ReceptiveAccount new .
-
 	CashierDeposit register: 20 *peso  on: anAccount .
 	CashierWithdraw register: 5 * peso on: anAccount .
 	
-	self assert: (TransferNet of: anAccount) equals: 'Transfer Net balance = 0 pesos' .! !
+	self assert: (TransferNet of: anAccount ) equals: 'Transfer Net balance = 0 pesos' .! !
 
-!ReportTest methodsFor: 'transfer net' stamp: 'AMV 12/5/2021 17:15:21'!
+!ReportTest methodsFor: 'transfer net' stamp: 'RV 12/6/2021 18:39:51'!
 test10TransferNetGivesACorrectTransferNetReportOfAReceptiveAccountWithOnlyATransferDeposit
 	
-	| anAccount anotherAccount |
-	anAccount _ ReceptiveAccount new .
-	anotherAccount _ ReceptiveAccount new .
+	Transfer from: anAccountToTransfer to: anAccount for: 20 * peso.
 	
-	Transfer from: anotherAccount to: anAccount for: 20 * peso.
-	
-	self assert: (TransferNet of: anAccount) equals: 'Transfer Net balance = 20 pesos' .! !
+	self assert: (TransferNet of: anAccount ) equals: 'Transfer Net balance = 20 pesos' .! !
 
-!ReportTest methodsFor: 'transfer net' stamp: 'AMV 12/5/2021 17:17:06'!
+!ReportTest methodsFor: 'transfer net' stamp: 'RV 12/6/2021 18:40:09'!
 test11TransferNetGivesACorrectTransferNetReportOfAPortfolioWithOneReceptiveAccount
-	| anAccount anotherAccount aPortfolio |
-	anotherAccount := ReceptiveAccount new.
-	anAccount := ReceptiveAccount new.
-	aPortfolio := Portfolio new.  
+		
+	CashierDeposit register: 100 * peso on: anAccount .
+	CashierWithdraw register: 50 * peso on: anAccount .
+	Transfer from: anAccount to: anAccountToTransfer for: 20 * peso.
+	Transfer from: anAccountToTransfer to: anAccount for: 30 * peso.
 	
-	CashierDeposit register: 100 * peso on: anAccount.
-	CashierWithdraw register: 50 * peso on: anAccount.
-	Transfer from: anAccount to: anotherAccount for: 20 * peso.
-	Transfer from: anotherAccount to: anAccount for: 30 * peso.
+	aPortfolio add: anAccount .
 	
-	aPortfolio add: anAccount.
-	
-	self assert: (TransferNet of: aPortfolio) equals: 'Transfer Net balance = 10 pesos' 
+	self assert: (TransferNet of: aPortfolio ) equals: 'Transfer Net balance = 10 pesos' 
 ! !
 
-!ReportTest methodsFor: 'transfer net' stamp: 'AMV 12/5/2021 17:16:53'!
+!ReportTest methodsFor: 'transfer net' stamp: 'RV 12/6/2021 18:40:09'!
 test12TransferNetGivesACorrectTransferNetReportOfAPortfolioWithVariousAccounts
-	| anAccount anotherAccount aPortfolio |
-	anotherAccount := ReceptiveAccount new.
-	anAccount := ReceptiveAccount new.
-	aPortfolio := Portfolio new.  
+		
+	CashierDeposit register: 100 * peso on: anAccount .
+	CashierWithdraw register: 50 * peso on: anAccount .
+	Transfer from: anAccount to: anAccountToTransfer for: 20 * peso.
 	
-	CashierDeposit register: 100 * peso on: anAccount.
-	CashierWithdraw register: 50 * peso on: anAccount.
-	Transfer from: anAccount to: anotherAccount for: 20 * peso.
-	
-	Transfer from: anotherAccount to: anAccount for: 30 * peso.
-	CashierDeposit register: 100 * peso on: anotherAccount .
+	Transfer from: anAccountToTransfer to: anAccount for: 30 * peso.
+	CashierDeposit register: 100 * peso on: anAccountToTransfer .
 
-	aPortfolio add: anAccount.
-	aPortfolio add: anotherAccount .
+	aPortfolio add: anAccount .
+	aPortfolio add: anAccountToTransfer .
 	
-	self assert: (TransferNet of: aPortfolio) equals: 'Transfer Net balance = 0 pesos' 
+	self assert: (TransferNet of: aPortfolio ) equals: 'Transfer Net balance = 0 pesos' 
 ! !
 
 
@@ -468,7 +436,6 @@ TestCase subclass: #TransferTest
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'ServiciosFinancieros-Ejercicio'!
-
 
 !TransferTest methodsFor: 'setup' stamp: 'RV 11/28/2021 22:37:23'!
 setUp
