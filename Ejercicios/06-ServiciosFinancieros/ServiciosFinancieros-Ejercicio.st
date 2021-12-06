@@ -1069,16 +1069,15 @@ visitTransferWithdraw: aTransferWithdraw
 TransferNet class
 	instanceVariableNames: ''!
 
-!TransferNet class methodsFor: 'instance creation' stamp: 'AMV 12/5/2021 11:46:35'!
+!TransferNet class methodsFor: 'instance creation' stamp: 'Rv 12/6/2021 14:59:44'!
 of: aFinancialAsset 
-	| aTransferNet transferBalance |
+	| aTransferNet  totalBalance|
 	aTransferNet _ self new .
-	transferBalance _ 0 * peso.
-	aFinancialAsset transactions do: [:eachTransaction | 
-		transferBalance _ transferBalance + (eachTransaction accept: aTransferNet) 
+	totalBalance := aFinancialAsset transactions inject: 0*peso into: [:transferBalance :eachTransaction | 
+		transferBalance + (		eachTransaction accept: aTransferNet)
 		] .
-		
-	^'Transfer Net balance = ' , (transferBalance) asString .! !
+	
+	^'Transfer Net balance = ' , (totalBalance) asString .! !
 
 
 !classDefinition: #Transfer category: 'ServiciosFinancieros-Ejercicio'!
